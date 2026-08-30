@@ -13,8 +13,9 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Servir arquivos estáticos da pasta raiz
+// Servir arquivos estáticos da pasta raiz e public
 app.use(express.static(path.join(__dirname)));
+app.use(express.static(path.join(__dirname, 'public')));
 
 // ----------------------------------------------------
 // ROTAS DE STATUS & CONFIGURAÇÃO
