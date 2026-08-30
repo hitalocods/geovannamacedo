@@ -341,9 +341,13 @@ app.get('/api/services', async (req, res) => {
   }
 });
 
+app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'index.html')));
+app.get('/index.html', (req, res) => res.sendFile(path.join(__dirname, 'index.html')));
 app.get('/admin', (req, res) => res.sendFile(path.join(__dirname, 'admin.html')));
+app.get('/admin.html', (req, res) => res.sendFile(path.join(__dirname, 'admin.html')));
 app.get('/painel', (req, res) => res.sendFile(path.join(__dirname, 'admin.html')));
 app.get('/agendar', (req, res) => res.sendFile(path.join(__dirname, 'agendamento.html')));
+app.get('/agendamento.html', (req, res) => res.sendFile(path.join(__dirname, 'agendamento.html')));
 
 // Inicialização Local ou Serverless
 if (!process.env.VERCEL) {
