@@ -19,15 +19,21 @@ app.use(express.static(path.join(__dirname)));
 // ----------------------------------------------------
 // ROTAS DE STATUS & CONFIGURAÇÃO
 // ----------------------------------------------------
-app.get('/api/health', (req, res) => {
-  res.json({
-    status: 'online',
-    timestamp: new Date().toISOString(),
-    db: db.getDbStatus()
-  });
+app.get('/api/health', async (req, res) => {
+  try {
+    await db.initDb();
+    res.json({
+      status: 'online',
+      timestamp: new Date().toISOString(),
+      db: db.getDbStatus()
+    });
+  } catch (e) {
+    res.status(500).json({ status: 'error', message: e.message });
+  }
 });
 
-app.get('/api/config/db-status', (req, res) => {
+app.get('/api/config/db-status', async (req, res) => {
+  await db.initDb();
   res.json(db.getDbStatus());
 });
 
@@ -117,7 +123,7 @@ app.delete('/api/appointments/:id', async (req, res) => {
 });
 
 // ----------------------------------------------------
-// ROTAS DO FINANCEIRO (CRUD & MÉTRICAS DIA/SEM/MÊS/ANO & DE/ATÉ)
+// ROTAS DO FINANCEIRO (CRUD & MÉTRICAS)
 // ----------------------------------------------------
 app.get('/api/finances', async (req, res) => {
   try {
@@ -184,7 +190,6 @@ app.delete('/api/finances/:id', async (req, res) => {
   }
 });
 
-// Obter Métricas com suporte a período rápido (dia, semana, mes, ano) ou intervalo exato (startDate & endDate)
 app.get('/api/finances/metrics', async (req, res) => {
   try {
     const { period, startDate, endDate } = req.query;
@@ -324,7 +329,7 @@ app.delete('/api/availability/blocked-dates/:id', async (req, res) => {
 });
 
 // ----------------------------------------------------
-// ROTAS DE SERVIÇOS & NAVEGAÇÃO
+// ROTAS DE SERVIÇOS & PÁGINAS
 // ----------------------------------------------------
 app.get('/api/services', async (req, res) => {
   try {
@@ -340,11 +345,19 @@ app.get('/admin', (req, res) => res.sendFile(path.join(__dirname, 'admin.html'))
 app.get('/painel', (req, res) => res.sendFile(path.join(__dirname, 'admin.html')));
 app.get('/agendar', (req, res) => res.sendFile(path.join(__dirname, 'agendamento.html')));
 
-async function startServer() {
-  await db.initDb();
-  app.listen(PORT, () => {
-    console.log(`✨ Servidor Geovanna Macedo rodando com sucesso na porta ${PORT}!`);
+// Inicialização Local ou Serverless
+if (!process.env.VERCEL) {
+  db.initDb().then(() => {
+    app.listen(PORT, () => {
+      console.log(`✨ Servidor Geovanna Macedo rodando com sucesso na porta ${PORT}!`);
+    });
+  }).catch((err) => {
+    console.error('Erro ao iniciar DB localmente:', err);
+    app.listen(PORT, () => {
+      console.log(`✨ Servidor Geovanna Macedo rodando com contingência na porta ${PORT}!`);
+    });
   });
 }
 
-startServer();
+// Exporta o aplicativo Express para o Vercel Serverless Function
+module.exports = app;

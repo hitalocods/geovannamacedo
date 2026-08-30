@@ -1,18 +1,25 @@
 const fs = require('fs');
 const path = require('path');
+const os = require('os');
 const { Pool } = require('pg');
 require('dotenv').config();
 
-const DATA_DIR = path.join(__dirname, 'data');
+// No Vercel ou ambientes serverless, o sistema de arquivos raiz é somente-leitura.
+// Usamos a pasta temporária do sistema para contingência local.
+const DATA_DIR = process.env.VERCEL ? path.join(os.tmpdir(), 'geovanna_data') : path.join(__dirname, 'data');
 const LOCAL_DB_FILE = path.join(DATA_DIR, 'local_db.json');
 
-// Garante que a pasta local exista
-if (!fs.existsSync(DATA_DIR)) {
-  fs.mkdirSync(DATA_DIR, { recursive: true });
+try {
+  if (!fs.existsSync(DATA_DIR)) {
+    fs.mkdirSync(DATA_DIR, { recursive: true });
+  }
+} catch (e) {
+  console.warn('Aviso ao preparar diretório de dados:', e.message);
 }
 
 let isNeonConnected = false;
 let pool = null;
+let memoryFallbackData = null;
 
 // Dados Padrão Iniciais
 const DEFAULT_SERVICES = [
@@ -41,183 +48,202 @@ const DEFAULT_AVAILABILITY = {
   ]
 };
 
-// Funções de banco local (JSON fallback)
+// Funções de banco local (JSON / Memory fallback)
 function getLocalData() {
-  if (!fs.existsSync(LOCAL_DB_FILE)) {
-    const initialData = {
-      appointments: [
-        {
-          id: 1,
-          client_name: 'Camila Vasconcelos',
-          client_phone: '(86) 99841-2233',
-          service_id: 'combo',
-          service_name: 'Combo Make + Penteado',
-          price: 310.00,
-          appointment_date: '2026-08-29',
-          appointment_time: '14:00',
-          status: 'confirmado',
-          payment_status: 'pago_total',
-          created_at: new Date().toISOString()
-        },
-        {
-          id: 2,
-          client_name: 'Larissa Menezes',
-          client_phone: '(86) 98112-9900',
-          service_id: 'formanda',
-          service_name: 'Produção Formanda Glam',
-          price: 350.00,
-          appointment_date: '2026-08-29',
-          appointment_time: '16:30',
-          status: 'pendente',
-          payment_status: 'sinal_pago',
-          created_at: new Date().toISOString()
-        },
-        {
-          id: 3,
-          client_name: 'Beatriz Alencar',
-          client_phone: '(86) 99455-1122',
-          service_id: 'noiva',
-          service_name: 'Produção Noiva Premium',
-          price: 750.00,
-          appointment_date: '2026-09-05',
-          appointment_time: '15:00',
-          status: 'confirmado',
-          payment_status: 'sinal_pago',
-          created_at: new Date().toISOString()
-        }
-      ],
-      finances: [
-        { id: 1, type: 'receita', category: 'Combo Make + Penteado', description: 'Atendimento Camila Vasconcelos', amount: 310.00, date: '2026-08-29', payment_method: 'pix', status: 'pago', created_at: new Date().toISOString() },
-        { id: 2, type: 'receita', category: 'Produção Formanda Glam', description: 'Sinal Formatura Larissa Menezes', amount: 150.00, date: '2026-08-29', payment_method: 'pix', status: 'pago', created_at: new Date().toISOString() },
-        { id: 3, type: 'despesa', category: 'Produtos & Cosméticos', description: 'Reposição de bases Kryolan e Cílios postiços', amount: 120.00, date: '2026-08-29', payment_method: 'cartao_credito', status: 'pago', created_at: new Date().toISOString() },
-        { id: 4, type: 'receita', category: 'Produção Noiva Premium', description: 'Agendamento: Beatriz Alencar', amount: 375.00, date: '2026-09-05', payment_method: 'pix', status: 'pago', created_at: new Date().toISOString() }
-      ],
-      inventory: DEFAULT_INVENTORY,
-      availability: DEFAULT_AVAILABILITY,
-      services: DEFAULT_SERVICES
-    };
-    fs.writeFileSync(LOCAL_DB_FILE, JSON.stringify(initialData, null, 2), 'utf-8');
-    return initialData;
-  }
+  if (memoryFallbackData) return memoryFallbackData;
+
+  const initialData = {
+    appointments: [
+      {
+        id: 1,
+        client_name: 'Camila Vasconcelos',
+        client_phone: '(86) 99841-2233',
+        service_id: 'combo',
+        service_name: 'Combo Make + Penteado',
+        price: 310.00,
+        appointment_date: '2026-08-29',
+        appointment_time: '14:00',
+        status: 'confirmado',
+        payment_status: 'pago_total',
+        created_at: new Date().toISOString()
+      },
+      {
+        id: 2,
+        client_name: 'Larissa Menezes',
+        client_phone: '(86) 98112-9900',
+        service_id: 'formanda',
+        service_name: 'Produção Formanda Glam',
+        price: 350.00,
+        appointment_date: '2026-08-29',
+        appointment_time: '16:30',
+        status: 'pendente',
+        payment_status: 'sinal_pago',
+        created_at: new Date().toISOString()
+      },
+      {
+        id: 3,
+        client_name: 'Beatriz Alencar',
+        client_phone: '(86) 99455-1122',
+        service_id: 'noiva',
+        service_name: 'Produção Noiva Premium',
+        price: 750.00,
+        appointment_date: '2026-09-05',
+        appointment_time: '15:00',
+        status: 'confirmado',
+        payment_status: 'sinal_pago',
+        created_at: new Date().toISOString()
+      }
+    ],
+    finances: [
+      { id: 1, type: 'receita', category: 'Combo Make + Penteado', description: 'Atendimento Camila Vasconcelos', amount: 310.00, date: '2026-08-29', payment_method: 'pix', status: 'pago', created_at: new Date().toISOString() },
+      { id: 2, type: 'receita', category: 'Produção Formanda Glam', description: 'Sinal Formatura Larissa Menezes', amount: 150.00, date: '2026-08-29', payment_method: 'pix', status: 'pago', created_at: new Date().toISOString() },
+      { id: 3, type: 'despesa', category: 'Produtos & Cosméticos', description: 'Reposição de bases Kryolan e Cílios postiços', amount: 120.00, date: '2026-08-29', payment_method: 'cartao_credito', status: 'pago', created_at: new Date().toISOString() },
+      { id: 4, type: 'receita', category: 'Produção Noiva Premium', description: 'Agendamento: Beatriz Alencar', amount: 375.00, date: '2026-09-05', payment_method: 'pix', status: 'pago', created_at: new Date().toISOString() }
+    ],
+    inventory: DEFAULT_INVENTORY,
+    availability: DEFAULT_AVAILABILITY,
+    services: DEFAULT_SERVICES
+  };
+
   try {
-    return JSON.parse(fs.readFileSync(LOCAL_DB_FILE, 'utf-8'));
+    if (!fs.existsSync(LOCAL_DB_FILE)) {
+      fs.writeFileSync(LOCAL_DB_FILE, JSON.stringify(initialData, null, 2), 'utf-8');
+      memoryFallbackData = initialData;
+      return initialData;
+    }
+    const content = fs.readFileSync(LOCAL_DB_FILE, 'utf-8');
+    memoryFallbackData = JSON.parse(content);
+    return memoryFallbackData;
   } catch (err) {
-    return { appointments: [], finances: [], inventory: DEFAULT_INVENTORY, availability: DEFAULT_AVAILABILITY, services: DEFAULT_SERVICES };
+    memoryFallbackData = initialData;
+    return initialData;
   }
 }
 
 function saveLocalData(data) {
-  fs.writeFileSync(LOCAL_DB_FILE, JSON.stringify(data, null, 2), 'utf-8');
+  memoryFallbackData = data;
+  try {
+    fs.writeFileSync(LOCAL_DB_FILE, JSON.stringify(data, null, 2), 'utf-8');
+  } catch (e) {
+    // Em ambientes serverless read-only, os dados ficam em memória durante a execução
+  }
 }
 
-// Inicializador do Banco
+let initPromise = null;
 async function initDb() {
-  const dbUrl = process.env.DATABASE_URL;
+  if (initPromise) return initPromise;
 
-  if (dbUrl && dbUrl.trim().startsWith('postgres')) {
-    try {
-      console.log('🔄 Conectando ao Neon PostgreSQL...');
-      pool = new Pool({
-        connectionString: dbUrl.trim(),
-        ssl: { rejectUnauthorized: false }
-      });
+  initPromise = (async () => {
+    const dbUrl = process.env.DATABASE_URL;
 
-      // Cria tabelas no Neon se não existirem
-      await pool.query(`
-        CREATE TABLE IF NOT EXISTS appointments (
-          id SERIAL PRIMARY KEY,
-          client_name VARCHAR(255) NOT NULL,
-          client_phone VARCHAR(50) NOT NULL,
-          service_id VARCHAR(50),
-          service_name VARCHAR(255) NOT NULL,
-          price NUMERIC(10, 2) DEFAULT 0.00,
-          appointment_date VARCHAR(50) NOT NULL,
-          appointment_time VARCHAR(20) NOT NULL,
-          notes TEXT,
-          payment_status VARCHAR(50) DEFAULT 'pendente',
-          payment_method VARCHAR(50) DEFAULT 'pix',
-          status VARCHAR(50) DEFAULT 'pendente',
-          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        );
+    if (dbUrl && dbUrl.trim().startsWith('postgres')) {
+      try {
+        if (!pool) {
+          pool = new Pool({
+            connectionString: dbUrl.trim(),
+            ssl: { rejectUnauthorized: false },
+            connectionTimeoutMillis: 5000
+          });
+        }
 
-        CREATE TABLE IF NOT EXISTS finances (
-          id SERIAL PRIMARY KEY,
-          type VARCHAR(20) NOT NULL,
-          category VARCHAR(100) NOT NULL,
-          description TEXT NOT NULL,
-          amount NUMERIC(10, 2) NOT NULL,
-          date VARCHAR(50) NOT NULL,
-          payment_method VARCHAR(50) DEFAULT 'pix',
-          status VARCHAR(50) DEFAULT 'pago',
-          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        );
+        // Cria tabelas no Neon se não existirem
+        await pool.query(`
+          CREATE TABLE IF NOT EXISTS appointments (
+            id SERIAL PRIMARY KEY,
+            client_name VARCHAR(255) NOT NULL,
+            client_phone VARCHAR(50) NOT NULL,
+            service_id VARCHAR(50),
+            service_name VARCHAR(255) NOT NULL,
+            price NUMERIC(10, 2) DEFAULT 0.00,
+            appointment_date VARCHAR(50) NOT NULL,
+            appointment_time VARCHAR(20) NOT NULL,
+            notes TEXT,
+            payment_status VARCHAR(50) DEFAULT 'pendente',
+            payment_method VARCHAR(50) DEFAULT 'pix',
+            status VARCHAR(50) DEFAULT 'pendente',
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+          );
 
-        CREATE TABLE IF NOT EXISTS inventory (
-          id SERIAL PRIMARY KEY,
-          name VARCHAR(255) NOT NULL,
-          category VARCHAR(100) NOT NULL,
-          quantity INT DEFAULT 0,
-          min_quantity INT DEFAULT 2,
-          cost_price NUMERIC(10, 2) DEFAULT 0.00,
-          supplier VARCHAR(255),
-          last_restock VARCHAR(50),
-          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        );
+          CREATE TABLE IF NOT EXISTS finances (
+            id SERIAL PRIMARY KEY,
+            type VARCHAR(20) NOT NULL,
+            category VARCHAR(100) NOT NULL,
+            description TEXT NOT NULL,
+            amount NUMERIC(10, 2) NOT NULL,
+            date VARCHAR(50) NOT NULL,
+            payment_method VARCHAR(50) DEFAULT 'pix',
+            status VARCHAR(50) DEFAULT 'pago',
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+          );
 
-        CREATE TABLE IF NOT EXISTS settings (
-          key VARCHAR(100) PRIMARY KEY,
-          value JSONB NOT NULL
-        );
-      `);
+          CREATE TABLE IF NOT EXISTS inventory (
+            id SERIAL PRIMARY KEY,
+            name VARCHAR(255) NOT NULL,
+            category VARCHAR(100) NOT NULL,
+            quantity INT DEFAULT 0,
+            min_quantity INT DEFAULT 2,
+            cost_price NUMERIC(10, 2) DEFAULT 0.00,
+            supplier VARCHAR(255),
+            last_restock VARCHAR(50),
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+          );
 
-      // Seed inicial no Neon se estiver vazio
-      const appCountRes = await pool.query('SELECT COUNT(*) FROM appointments');
-      if (parseInt(appCountRes.rows[0].count, 10) === 0) {
-        const local = getLocalData();
-        for (const a of (local.appointments || [])) {
+          CREATE TABLE IF NOT EXISTS settings (
+            key VARCHAR(100) PRIMARY KEY,
+            value JSONB NOT NULL
+          );
+        `);
+
+        // Seed inicial no Neon se estiver vazio
+        const appCountRes = await pool.query('SELECT COUNT(*) FROM appointments');
+        if (parseInt(appCountRes.rows[0].count, 10) === 0) {
+          const local = getLocalData();
+          for (const a of (local.appointments || [])) {
+            await pool.query(
+              `INSERT INTO appointments (client_name, client_phone, service_id, service_name, price, appointment_date, appointment_time, status, payment_status)
+               VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
+              [a.client_name, a.client_phone, a.service_id, a.service_name, a.price, a.appointment_date, a.appointment_time, a.status, a.payment_status]
+            );
+          }
+          for (const f of (local.finances || [])) {
+            await pool.query(
+              `INSERT INTO finances (type, category, description, amount, date, payment_method, status)
+               VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+              [f.type, f.category, f.description, f.amount, f.date, f.payment_method, f.status]
+            );
+          }
+          for (const i of (local.inventory || [])) {
+            await pool.query(
+              `INSERT INTO inventory (name, category, quantity, min_quantity, cost_price, supplier, last_restock)
+               VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+              [i.name, i.category, i.quantity, i.min_quantity, i.cost_price, i.supplier, i.last_restock]
+            );
+          }
           await pool.query(
-            `INSERT INTO appointments (client_name, client_phone, service_id, service_name, price, appointment_date, appointment_time, status, payment_status)
-             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
-            [a.client_name, a.client_phone, a.service_id, a.service_name, a.price, a.appointment_date, a.appointment_time, a.status, a.payment_status]
+            `INSERT INTO settings (key, value) VALUES ('availability', $1) ON CONFLICT (key) DO UPDATE SET value = $1`,
+            [JSON.stringify(local.availability || DEFAULT_AVAILABILITY)]
           );
         }
-        for (const f of (local.finances || [])) {
-          await pool.query(
-            `INSERT INTO finances (type, category, description, amount, date, payment_method, status)
-             VALUES ($1, $2, $3, $4, $5, $6, $7)`,
-            [f.type, f.category, f.description, f.amount, f.date, f.payment_method, f.status]
-          );
-        }
-        for (const i of (local.inventory || [])) {
-          await pool.query(
-            `INSERT INTO inventory (name, category, quantity, min_quantity, cost_price, supplier, last_restock)
-             VALUES ($1, $2, $3, $4, $5, $6, $7)`,
-            [i.name, i.category, i.quantity, i.min_quantity, i.cost_price, i.supplier, i.last_restock]
-          );
-        }
-        await pool.query(
-          `INSERT INTO settings (key, value) VALUES ('availability', $1) ON CONFLICT (key) DO UPDATE SET value = $1`,
-          [JSON.stringify(local.availability || DEFAULT_AVAILABILITY)]
-        );
+
+        isNeonConnected = true;
+        console.log('✅ Neon PostgreSQL Conectado com Sucesso!');
+      } catch (err) {
+        console.warn('⚠️ Falha ao conectar no Neon. Usando armazenamento local:', err.message);
+        isNeonConnected = false;
+        getLocalData();
       }
-
-      isNeonConnected = true;
-      console.log('✅ Neon PostgreSQL Conectado com Sucesso!');
-    } catch (err) {
-      console.warn('⚠️ Falha ao conectar no Neon. Usando armazenamento local JSON.', err.message);
-      isNeonConnected = false;
+    } else {
       getLocalData();
     }
-  } else {
-    console.log('📁 Usando banco de dados local JSON (data/local_db.json).');
-    getLocalData();
-  }
+  })();
+
+  return initPromise;
 }
 
 function getDbStatus() {
   return {
     isNeonConnected,
-    storage: isNeonConnected ? 'Neon PostgreSQL Cloud' : 'Local JSON Storage',
+    storage: isNeonConnected ? 'Neon PostgreSQL Cloud' : 'Local Storage',
     timestamp: new Date().toISOString()
   };
 }
@@ -226,6 +252,7 @@ function getDbStatus() {
 // MÉTODOS DE AGENDAMENTOS
 // ----------------------------------------------------
 async function getAppointments(filters = {}) {
+  await initDb();
   if (isNeonConnected) {
     let sql = 'SELECT * FROM appointments WHERE 1=1';
     const params = [];
@@ -265,6 +292,7 @@ async function getAppointments(filters = {}) {
 }
 
 async function getAppointmentById(id) {
+  await initDb();
   if (isNeonConnected) {
     const res = await pool.query('SELECT * FROM appointments WHERE id = $1', [id]);
     return res.rows[0] || null;
@@ -275,6 +303,7 @@ async function getAppointmentById(id) {
 }
 
 async function createAppointment(appData) {
+  await initDb();
   if (isNeonConnected) {
     const res = await pool.query(
       `INSERT INTO appointments (client_name, client_phone, service_id, service_name, price, appointment_date, appointment_time, notes, payment_status, payment_method, status)
@@ -297,6 +326,7 @@ async function createAppointment(appData) {
 }
 
 async function updateAppointment(id, updates) {
+  await initDb();
   if (isNeonConnected) {
     const existing = await getAppointmentById(id);
     if (!existing) return null;
@@ -321,6 +351,7 @@ async function updateAppointment(id, updates) {
 }
 
 async function deleteAppointment(id) {
+  await initDb();
   if (isNeonConnected) {
     const res = await pool.query('DELETE FROM appointments WHERE id = $1 RETURNING *', [id]);
     return res.rows[0] || null;
@@ -338,6 +369,7 @@ async function deleteAppointment(id) {
 // MÉTODOS FINANCEIROS
 // ----------------------------------------------------
 async function getTransactions(filters = {}) {
+  await initDb();
   if (isNeonConnected) {
     let sql = 'SELECT * FROM finances WHERE 1=1';
     const params = [];
@@ -373,6 +405,7 @@ async function getTransactions(filters = {}) {
 }
 
 async function createTransaction(txData) {
+  await initDb();
   if (isNeonConnected) {
     const res = await pool.query(
       `INSERT INTO finances (type, category, description, amount, date, payment_method, status)
@@ -391,6 +424,7 @@ async function createTransaction(txData) {
 }
 
 async function updateTransaction(id, updates) {
+  await initDb();
   if (isNeonConnected) {
     const fields = [];
     const values = [];
@@ -413,6 +447,7 @@ async function updateTransaction(id, updates) {
 }
 
 async function deleteTransaction(id) {
+  await initDb();
   if (isNeonConnected) {
     const res = await pool.query('DELETE FROM finances WHERE id = $1 RETURNING *', [id]);
     return res.rows[0] || null;
@@ -471,14 +506,12 @@ async function getFinancialMetrics(period = 'mes', customStart = null, customEnd
   const pendingApps = filteredApps.filter(a => a.status === 'pendente').length;
   const averageTicket = filteredApps.length > 0 ? (totalRevenue / filteredApps.length) : 0;
 
-  // Timeline chart labels & data
   const timeline = {
     labels: ['Semana 1', 'Semana 2', 'Semana 3', 'Semana 4'],
     revenue: [100, 130, 140, 90],
     expenses: [40, 30, 25, 25]
   };
 
-  // Categories chart
   const catMap = {};
   filteredTx.forEach(t => {
     const cat = t.category || 'Geral';
@@ -508,6 +541,7 @@ async function getFinancialMetrics(period = 'mes', customStart = null, customEnd
 // MÉTODOS DE ESTOQUE
 // ----------------------------------------------------
 async function getInventory() {
+  await initDb();
   if (isNeonConnected) {
     const res = await pool.query('SELECT * FROM inventory ORDER BY name ASC');
     return res.rows;
@@ -518,6 +552,7 @@ async function getInventory() {
 }
 
 async function createInventoryItem(item) {
+  await initDb();
   if (isNeonConnected) {
     const res = await pool.query(
       `INSERT INTO inventory (name, category, quantity, min_quantity, cost_price, supplier, last_restock)
@@ -537,6 +572,7 @@ async function createInventoryItem(item) {
 }
 
 async function updateInventoryItem(id, updates) {
+  await initDb();
   if (isNeonConnected) {
     const fields = [];
     const values = [];
@@ -559,6 +595,7 @@ async function updateInventoryItem(id, updates) {
 }
 
 async function adjustInventoryQuantity(id, delta) {
+  await initDb();
   if (isNeonConnected) {
     const res = await pool.query('UPDATE inventory SET quantity = GREATEST(0, quantity + $1) WHERE id = $2 RETURNING *', [delta, id]);
     return res.rows[0] || null;
@@ -573,6 +610,7 @@ async function adjustInventoryQuantity(id, delta) {
 }
 
 async function deleteInventoryItem(id) {
+  await initDb();
   if (isNeonConnected) {
     const res = await pool.query('DELETE FROM inventory WHERE id = $1 RETURNING *', [id]);
     return res.rows[0] || null;
@@ -590,6 +628,7 @@ async function deleteInventoryItem(id) {
 // MÉTODOS DE DISPONIBILIDADE & HORÁRIOS
 // ----------------------------------------------------
 async function getAvailabilitySettings() {
+  await initDb();
   if (isNeonConnected) {
     const res = await pool.query("SELECT value FROM settings WHERE key = 'availability'");
     if (res.rows.length > 0) return res.rows[0].value;
@@ -601,6 +640,7 @@ async function getAvailabilitySettings() {
 }
 
 async function updateAvailabilitySettings(settings) {
+  await initDb();
   if (isNeonConnected) {
     await pool.query(
       `INSERT INTO settings (key, value) VALUES ('availability', $1)
