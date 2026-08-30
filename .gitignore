@@ -1,0 +1,30 @@
+# Dependências
+node_modules/
+
+# Variáveis de Ambiente e Credenciais Seguras
+.env
+.env.local
+.env.*.local
+
+# Banco de Dados Local / Arquivos de Estado
+data/local_db.json
+data/
+*.sqlite
+*.db
+
+# Logs e Depuração
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Arquivos de Sistema
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# IDE e Ferramentas
+.vscode/
+.idea/
+.tempmediaStorage/
+.system_generated/

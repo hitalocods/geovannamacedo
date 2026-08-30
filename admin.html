@@ -1,0 +1,3076 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+  <title>Painel de Gestão & Financeiro — Geovanna Macedo</title>
+  <meta name="description"
+    content="Painel de controle minimalista e clean de agendamentos, estoque e gestão financeira para Geovanna Macedo." />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet" />
+
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    :root {
+      /* Paleta Oficial Clean & Luxury */
+      --pearly-white: #F9F6F1;
+      --pure-white: #FFFFFF;
+      --bg-surface: #FFFFFF;
+      --bg-card: rgba(255, 255, 255, 0.94);
+      --bg-card-hover: #FFFFFF;
+      --bg-glass: rgba(249, 246, 241, 0.88);
+
+      --blush-pink: #E1C1B6;
+      --blush-light: #F7EDE8;
+      --blush-glow: rgba(225, 193, 182, 0.4);
+      --blush-soft: rgba(225, 193, 182, 0.18);
+
+      --champagne-gold: #D6BD9F;
+      --champagne-light: #EAD8C3;
+      --champagne-dark: #A88661;
+      --champagne-glow: rgba(214, 189, 159, 0.4);
+
+      /* Tipografia Espresso & Charcoal */
+      --text-primary: #281F1B;
+      --text-secondary: #54443C;
+      --text-muted: #82726A;
+      --text-light: #AB9C94;
+
+      --green: #2EA871;
+      --green-soft: rgba(46, 168, 113, 0.12);
+      --red: #D96B58;
+      --red-soft: rgba(217, 107, 88, 0.12);
+
+      --border-glass: rgba(214, 189, 159, 0.35);
+      --border-gold: rgba(214, 189, 159, 0.55);
+      --border-blush: rgba(225, 193, 182, 0.55);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      min-height: 100vh;
+      background-color: var(--pearly-white);
+      background: radial-gradient(circle at 50% 10%, #FFFFFF 0%, #F9F6F1 50%, #ECE4D8 100%);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      color: var(--text-primary);
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Ambient Lighting Clean */
+    .ambient-glow {
+      position: fixed;
+      top: -100px;
+      right: 10%;
+      width: clamp(350px, 50vw, 650px);
+      height: clamp(350px, 50vw, 650px);
+      background: radial-gradient(circle, rgba(225, 193, 182, 0.35) 0%, rgba(214, 189, 159, 0.2) 50%, transparent 70%);
+      filter: blur(80px);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* Top Navigation Bar */
+    .admin-nav {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border-bottom: 1px solid var(--border-gold);
+      padding: 12px clamp(14px, 3vw, 32px);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 4px 20px rgba(168, 134, 97, 0.08);
+      min-height: 62px;
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--text-primary);
+      flex-shrink: 0;
+    }
+
+    .brand-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(20px, 4.5vw, 24px);
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      color: var(--text-primary);
+      line-height: 1;
+    }
+
+    .brand-title span {
+      font-style: italic;
+      color: var(--champagne-dark);
+    }
+
+    .badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 9999px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      background: #FFFFFF;
+      border: 1px solid var(--border-gold);
+      color: var(--champagne-dark);
+    }
+
+    /* Desktop Nav Actions */
+    .nav-actions-desktop {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    /* Mobile Nav Actions */
+    .nav-actions-mobile {
+      display: none;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-nav-action {
+      background: linear-gradient(135deg, #E1C1B6 0%, #D6BD9F 50%, #B59B79 100%);
+      color: #1A120E;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 9999px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      box-shadow: 0 4px 16px rgba(214, 189, 159, 0.4);
+      min-height: 38px;
+    }
+
+    .btn-nav-action:hover {
+      box-shadow: 0 6px 22px rgba(225, 193, 182, 0.5);
+      transform: translateY(-1px);
+      background: linear-gradient(135deg, #ECD8D0 0%, #E0CAA6 50%, #C4A783 100%);
+    }
+
+    .btn-nav-outline {
+      background: #FFFFFF;
+      color: var(--text-secondary);
+      border: 1px solid var(--border-glass);
+      padding: 8px 14px;
+      border-radius: 9999px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 8px rgba(168, 134, 97, 0.04);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      min-height: 38px;
+    }
+
+    .btn-nav-outline:hover {
+      border-color: var(--champagne-dark);
+      color: var(--text-primary);
+      transform: translateY(-1px);
+    }
+
+    .btn-notification-bell {
+      position: relative;
+      background: #FFFFFF;
+      border: 1px solid var(--border-glass);
+      color: var(--text-secondary);
+      padding: 8px 14px;
+      border-radius: 9999px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+      min-height: 38px;
+    }
+
+    .btn-notification-bell:hover {
+      border-color: var(--champagne-dark);
+      color: var(--text-primary);
+    }
+
+    .bell-badge {
+      background: var(--red);
+      color: #FFFFFF;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 1px 6px;
+      border-radius: 9999px;
+      display: none;
+    }
+
+    .db-status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      padding: 5px 12px;
+      border-radius: 9999px;
+      background: #FFFFFF;
+      border: 1px solid var(--border-glass);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+    }
+
+    .db-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 8px var(--green);
+    }
+
+    /* Animated Luxury Hamburger Button */
+    .hamburger-btn {
+      display: none;
+      background: #FFFFFF;
+      border: 1px solid var(--border-gold);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 2px 10px rgba(168, 134, 97, 0.1);
+      padding: 0;
+    }
+
+    .hamburger-btn:hover {
+      border-color: var(--champagne-dark);
+      transform: scale(1.05);
+    }
+
+    .hamburger-bar {
+      width: 18px;
+      height: 2px;
+      background: var(--text-primary);
+      border-radius: 2px;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      transform-origin: center;
+    }
+
+    .hamburger-btn.open .hamburger-bar:nth-child(1) {
+      transform: translateY(7px) rotate(45deg);
+    }
+
+    .hamburger-btn.open .hamburger-bar:nth-child(2) {
+      opacity: 0;
+      transform: scale(0);
+    }
+
+    .hamburger-btn.open .hamburger-bar:nth-child(3) {
+      transform: translateY(-7px) rotate(-45deg);
+    }
+
+    /* Off-Canvas Glass Drawer */
+    .drawer-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(40, 31, 27, 0.55);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      z-index: 105;
+      display: none;
+      opacity: 0;
+      transition: opacity 0.35s ease;
+    }
+
+    .drawer-backdrop.open {
+      display: block;
+      opacity: 1;
+    }
+
+    .mobile-drawer {
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: min(340px, 86vw);
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(30px);
+      -webkit-backdrop-filter: blur(30px);
+      border-left: 1px solid var(--border-gold);
+      z-index: 106;
+      padding: 24px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      transform: translateX(100%);
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: -15px 0 45px rgba(168, 134, 97, 0.2);
+    }
+
+    .mobile-drawer.open {
+      transform: translateX(0);
+    }
+
+    .drawer-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border-glass);
+    }
+
+    .drawer-close-btn {
+      background: #FAF7F4;
+      border: 1px solid var(--border-glass);
+      color: var(--text-secondary);
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .drawer-close-btn:hover {
+      border-color: var(--champagne-dark);
+      color: var(--text-primary);
+    }
+
+    .drawer-section-title {
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      font-weight: 700;
+      margin-top: 4px;
+    }
+
+    .drawer-nav-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .drawer-nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: #FAF7F4;
+      border: 1px solid var(--border-glass);
+      color: var(--text-secondary);
+      font-size: 13px;
+      font-weight: 600;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      font-family: inherit;
+    }
+
+    .drawer-nav-item:hover {
+      background: #FFFFFF;
+      border-color: var(--champagne-gold);
+      color: var(--text-primary);
+      transform: translateX(4px);
+    }
+
+    .drawer-nav-item.active {
+      background: linear-gradient(135deg, #E1C1B6 0%, #D6BD9F 100%);
+      color: #1A120E;
+      font-weight: 700;
+      border-color: var(--champagne-dark);
+      box-shadow: 0 4px 14px rgba(214, 189, 159, 0.35);
+    }
+
+    .drawer-extra-links {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .drawer-link-card {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 11px 14px;
+      border-radius: 12px;
+      background: #FFFFFF;
+      border: 1px solid var(--border-glass);
+      color: var(--text-secondary);
+      font-size: 12px;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: inherit;
+    }
+
+    .drawer-link-card:hover {
+      border-color: var(--champagne-dark);
+      color: var(--text-primary);
+    }
+
+    /* Main Container */
+    .admin-container {
+      max-width: 1280px;
+      width: 100%;
+      margin: 0 auto;
+      padding: clamp(14px, 3vw, 32px);
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Tabs Navigation */
+    .tabs-bar {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 6px;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .tabs-bar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .tab-btn {
+      background: #FFFFFF;
+      border: 1px solid var(--border-glass);
+      color: var(--text-secondary);
+      padding: 9px 18px;
+      border-radius: 9999px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 2px 8px rgba(168, 134, 97, 0.04);
+      flex-shrink: 0;
+    }
+
+    .tab-btn:hover {
+      border-color: var(--champagne-gold);
+      color: var(--text-primary);
+      transform: translateY(-1px);
+    }
+
+    .tab-btn.active {
+      background: linear-gradient(135deg, #E1C1B6, #D6BD9F);
+      border-color: var(--champagne-dark);
+      color: #1A120E;
+      font-weight: 700;
+      box-shadow: 0 4px 16px rgba(214, 189, 159, 0.4);
+    }
+
+    /* Period Filter Bar & Custom Date Range (De / Até) */
+    .period-filter-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      background: var(--bg-card);
+      padding: 14px 18px;
+      border-radius: 22px;
+      border: 1px solid var(--border-gold);
+      box-shadow: 0 4px 16px rgba(168, 134, 97, 0.06);
+    }
+
+    .period-pills {
+      display: flex;
+      gap: 6px;
+      background: #F8F3ED;
+      padding: 4px;
+      border-radius: 9999px;
+      border: 1px solid var(--border-glass);
+      flex-wrap: wrap;
+    }
+
+    .period-pill {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 6px 14px;
+      border-radius: 9999px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .period-pill:hover {
+      color: var(--text-primary);
+    }
+
+    .period-pill.active {
+      background: linear-gradient(135deg, #E1C1B6, #D6BD9F);
+      color: #1A120E;
+      font-weight: 700;
+      box-shadow: 0 2px 10px rgba(214, 189, 159, 0.35);
+    }
+
+    .custom-date-box {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .custom-date-box span {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .date-input-mini {
+      background: #FFFFFF;
+      border: 1px solid var(--border-glass);
+      color: var(--text-primary);
+      padding: 7px 12px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-family: inherit;
+      outline: none;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+    }
+
+    .date-input-mini:focus {
+      border-color: var(--champagne-dark);
+      box-shadow: 0 0 8px var(--champagne-glow);
+    }
+
+    .btn-mini-apply {
+      background: linear-gradient(135deg, #E1C1B6, #D6BD9F);
+      color: #1a120e;
+      border: none;
+      padding: 7px 16px;
+      border-radius: 9999px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 8px rgba(214, 189, 159, 0.3);
+      min-height: 34px;
+    }
+
+    .btn-mini-apply:hover {
+      box-shadow: 0 4px 12px var(--blush-glow);
+      transform: translateY(-1px);
+    }
+
+    /* KPI Summary Cards Grid */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 16px;
+    }
+
+    .kpi-card {
+      background: #FFFFFF;
+      border: 1px solid var(--border-gold);
+      border-radius: 22px;
+      padding: 20px;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 4px 16px rgba(168, 134, 97, 0.06);
+    }
+
+    .kpi-card:hover {
+      border-color: var(--champagne-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(168, 134, 97, 0.12);
+    }
+
+    .kpi-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, var(--champagne-dark), transparent);
+    }
+
+    .kpi-title {
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      font-weight: 700;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .kpi-value {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(26px, 2.5vw, 34px);
+      font-weight: 700;
+      color: var(--text-primary);
+      line-height: 1.1;
+      margin-bottom: 4px;
+    }
+
+    .kpi-value.gold {
+      color: var(--champagne-dark);
+    }
+
+    .kpi-value.green {
+      color: var(--green);
+    }
+
+    .kpi-value.red {
+      color: var(--red);
+    }
+
+    .kpi-sub {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    /* Charts Section */
+    .charts-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 20px;
+    }
+
+    .chart-card {
+      background: #FFFFFF;
+      border: 1px solid var(--border-gold);
+      border-radius: 24px;
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      box-shadow: 0 4px 18px rgba(168, 134, 97, 0.06);
+    }
+
+    .chart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .chart-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(18px, 3.5vw, 22px);
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .chart-box {
+      position: relative;
+      width: 100%;
+      height: 260px;
+    }
+
+    /* Panels & Tables */
+    .panel-card {
+      background: #FFFFFF;
+      border: 1px solid var(--border-gold);
+      border-radius: 24px;
+      padding: clamp(16px, 3vw, 24px);
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      box-shadow: 0 4px 18px rgba(168, 134, 97, 0.06);
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .panel-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(20px, 4vw, 24px);
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .filter-group {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .search-input {
+      background: #FAF7F4;
+      border: 1px solid var(--border-glass);
+      color: var(--text-primary);
+      padding: 9px 14px;
+      border-radius: 9999px;
+      font-size: 12px;
+      outline: none;
+      transition: all 0.2s ease;
+      min-width: 180px;
+    }
+
+    .search-input:focus {
+      border-color: var(--champagne-dark);
+      background: #FFFFFF;
+      box-shadow: 0 0 10px var(--champagne-glow);
+    }
+
+    .select-filter {
+      background: #FAF7F4;
+      border: 1px solid var(--border-glass);
+      color: var(--text-secondary);
+      padding: 9px 14px;
+      border-radius: 9999px;
+      font-size: 12px;
+      font-weight: 500;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .select-filter:focus {
+      border-color: var(--champagne-dark);
+      background: #FFFFFF;
+    }
+
+    .table-responsive {
+      width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 13px;
+    }
+
+    th {
+      padding: 12px 14px;
+      color: var(--text-muted);
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      border-bottom: 1px solid var(--border-glass);
+      background: #FAF7F4;
+      white-space: nowrap;
+    }
+
+    td {
+      padding: 14px;
+      border-bottom: 1px solid rgba(214, 189, 159, 0.25);
+      color: var(--text-secondary);
+      white-space: nowrap;
+    }
+
+    tr:hover td {
+      background: rgba(225, 193, 182, 0.08);
+    }
+
+    /* Badges & Status */
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 10px;
+      border-radius: 9999px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: capitalize;
+    }
+
+    .status-pendente {
+      background: #F9F2EA;
+      color: #A88661;
+      border: 1px solid rgba(168, 134, 97, 0.35);
+    }
+
+    .status-confirmado {
+      background: rgba(46, 168, 113, 0.12);
+      color: #1D7A50;
+      border: 1px solid rgba(46, 168, 113, 0.35);
+    }
+
+    .status-concluido {
+      background: rgba(70, 130, 240, 0.12);
+      color: #2463CE;
+      border: 1px solid rgba(70, 130, 240, 0.35);
+    }
+
+    .status-cancelado {
+      background: rgba(217, 107, 88, 0.12);
+      color: #C24835;
+      border: 1px solid rgba(217, 107, 88, 0.35);
+    }
+
+    .stock-badge-low {
+      background: rgba(217, 107, 88, 0.15);
+      color: #C24835;
+      border: 1px solid var(--blush-pink);
+      padding: 3px 8px;
+      border-radius: 9999px;
+      font-size: 10px;
+      font-weight: 700;
+    }
+
+    .stock-badge-ok {
+      background: rgba(46, 168, 113, 0.12);
+      color: #1D7A50;
+      padding: 3px 8px;
+      border-radius: 9999px;
+      font-size: 10px;
+      font-weight: 700;
+    }
+
+    /* Action Buttons in Table */
+    .action-btn-group {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .action-icon-btn {
+      background: #FFFFFF;
+      border: 1px solid var(--border-glass);
+      color: var(--text-secondary);
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 12px;
+      transition: all 0.2s ease;
+      text-decoration: none;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+    }
+
+    .action-icon-btn:hover {
+      border-color: var(--champagne-dark);
+      color: var(--text-primary);
+      transform: scale(1.08);
+      background: #FAF7F4;
+    }
+
+    .action-icon-btn.whatsapp:hover {
+      border-color: var(--green);
+      color: var(--green);
+    }
+
+    .action-icon-btn.delete:hover {
+      border-color: var(--red);
+      color: var(--red);
+    }
+
+    /* Modals Clean */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(40, 31, 27, 0.6);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal-content {
+      background: #FFFFFF;
+      border: 1px solid var(--border-gold);
+      border-radius: 28px;
+      padding: clamp(20px, 4vw, 32px);
+      max-width: 480px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      box-shadow: 0 25px 60px rgba(40, 31, 27, 0.25);
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      animation: modalPop 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    @keyframes modalPop {
+      from {
+        transform: scale(0.94);
+        opacity: 0;
+      }
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 26px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .modal-close {
+      background: #FAF7F4;
+      border: 1px solid var(--border-glass);
+      color: var(--text-secondary);
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .modal-close:hover {
+      border-color: var(--champagne-dark);
+      color: var(--text-primary);
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-label {
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      font-weight: 700;
+    }
+
+    .form-control {
+      background: #FAF7F4;
+      border: 1px solid var(--border-glass);
+      color: var(--text-primary);
+      padding: 11px 14px;
+      border-radius: 14px;
+      font-size: 14px;
+      font-family: inherit;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    .form-control:focus {
+      border-color: var(--champagne-dark);
+      background: #FFFFFF;
+      box-shadow: 0 0 10px var(--champagne-glow);
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .btn-submit {
+      background: linear-gradient(135deg, #E1C1B6 0%, #D6BD9F 50%, #B59B79 100%);
+      color: #1A120E;
+      border: none;
+      padding: 10px 22px;
+      border-radius: 9999px;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 18px rgba(214, 189, 159, 0.4);
+    }
+
+    .btn-submit:hover {
+      box-shadow: 0 6px 22px rgba(225, 193, 182, 0.5);
+      transform: translateY(-1px);
+    }
+
+    /* Time management chips */
+    .times-manager-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .time-badge-chip {
+      background: #FFFFFF;
+      border: 1px solid var(--border-gold);
+      color: var(--text-primary);
+      padding: 6px 14px;
+      border-radius: 9999px;
+      font-size: 13px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 2px 8px rgba(168, 134, 97, 0.05);
+    }
+
+    .time-badge-chip button {
+      background: none;
+      border: none;
+      color: var(--red);
+      cursor: pointer;
+      font-size: 12px;
+      padding: 0 2px;
+    }
+
+    .time-badge-chip button:hover {
+      color: #000;
+    }
+
+    .days-toggle-grid {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .day-pill-toggle {
+      background: #FFFFFF;
+      border: 1px solid var(--border-glass);
+      color: var(--text-secondary);
+      padding: 8px 16px;
+      border-radius: 9999px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      user-select: none;
+      box-shadow: 0 2px 8px rgba(168, 134, 97, 0.04);
+    }
+
+    .day-pill-toggle:hover {
+      border-color: var(--champagne-gold);
+      color: var(--text-primary);
+    }
+
+    .day-pill-toggle.active {
+      background: linear-gradient(135deg, #E1C1B6, #D6BD9F) !important;
+      color: #1A120E !important;
+      font-weight: 700;
+      border-color: var(--champagne-dark) !important;
+      box-shadow: 0 4px 14px rgba(214, 189, 159, 0.4);
+    }
+
+    /* Toast Notification Container */
+    .toast-container {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      pointer-events: none;
+    }
+
+    .toast-card {
+      pointer-events: auto;
+      background: #FFFFFF;
+      border: 1px solid var(--border-gold);
+      border-radius: 20px;
+      padding: 16px 20px;
+      box-shadow: 0 12px 35px rgba(168, 134, 97, 0.2), 0 0 20px rgba(225, 193, 182, 0.25);
+      max-width: 380px;
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      animation: toastSlideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    @keyframes toastSlideIn {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    .toast-icon-bubble {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #E1C1B6, #D6BD9F);
+      color: #1a120e;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+      box-shadow: 0 4px 10px rgba(214, 189, 159, 0.4);
+    }
+
+    .toast-content {
+      flex: 1;
+    }
+
+    .toast-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 2px;
+    }
+
+    .toast-body {
+      font-size: 12px;
+      color: var(--text-secondary);
+      line-height: 1.4;
+      margin-bottom: 6px;
+    }
+
+    .toast-btn-action {
+      font-size: 11px;
+      color: var(--champagne-dark);
+      font-weight: 700;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .toast-btn-action:hover {
+      text-decoration: underline;
+    }
+
+    /* Views visibility */
+    .view-section {
+      display: none;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .view-section.active {
+      display: flex;
+    }
+
+    /* ======================================================== */
+    /* RESPONSIVIDADE PARA TABLET E MOBILE                      */
+    /* ======================================================== */
+    @media (max-width: 991px) {
+      .nav-actions-desktop {
+        display: none;
+      }
+
+      .nav-actions-mobile {
+        display: flex;
+      }
+
+      .hamburger-btn {
+        display: flex;
+      }
+
+      .admin-container {
+        padding: 14px 12px;
+        gap: 16px;
+      }
+
+      /* Grid de KPIs no Tablet */
+      .kpi-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+      }
+
+      .charts-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .chart-box {
+        height: 230px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .badge-pill {
+        display: none;
+      }
+
+      .admin-nav {
+        padding: 10px 14px;
+      }
+
+      /* Grid de KPIs no Smartphone */
+      .kpi-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+      }
+
+      /* O 5º KPI (Ticket Médio) ocupa a linha inteira */
+      .kpi-card:last-child {
+        grid-column: span 2;
+      }
+
+      .kpi-card {
+        padding: 14px 12px;
+        border-radius: 18px;
+      }
+
+      .kpi-title {
+        font-size: 10px;
+        margin-bottom: 4px;
+      }
+
+      .kpi-value {
+        font-size: 24px;
+      }
+
+      .kpi-sub {
+        font-size: 10px;
+      }
+
+      /* Barra de Filtro de Período Stackada */
+      .period-filter-bar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+        padding: 12px;
+        border-radius: 18px;
+      }
+
+      .period-pills {
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        scrollbar-width: none;
+      }
+
+      .period-pill {
+        white-space: nowrap;
+        padding: 6px 12px;
+        font-size: 11px;
+      }
+
+      .custom-date-box {
+        display: grid;
+        grid-template-columns: auto 1fr auto 1fr;
+        gap: 6px;
+        align-items: center;
+      }
+
+      .custom-date-box span {
+        font-size: 11px;
+      }
+
+      .date-input-mini {
+        width: 100%;
+        padding: 6px 8px;
+        font-size: 11px;
+      }
+
+      .btn-mini-apply {
+        grid-column: span 4;
+        width: 100%;
+        text-align: center;
+        margin-top: 4px;
+      }
+
+      /* Ajustes de Painel & Filtros */
+      .panel-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+      }
+
+      .filter-group {
+        flex-direction: column;
+        align-items: stretch;
+        width: 100%;
+      }
+
+      .search-input,
+      .select-filter {
+        width: 100%;
+      }
+
+      .toast-container {
+        top: 12px;
+        right: 12px;
+        left: 12px;
+      }
+
+      .toast-card {
+        max-width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="ambient-glow"></div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Drawer Backdrop & Mobile Drawer (Off-Canvas) -->
+  <div class="drawer-backdrop" id="drawerBackdrop" onclick="closeMobileDrawer()"></div>
+  <aside class="mobile-drawer" id="mobileDrawer">
+    <div class="drawer-header">
+      <div class="brand-title">Geovanna <span>Macedo</span></div>
+      <button class="drawer-close-btn" onclick="closeMobileDrawer()" aria-label="Fechar menu">✕</button>
+    </div>
+
+    <div>
+      <div class="db-status-badge" style="width: 100%; justify-content: center;">
+        <div class="db-dot"></div>
+        <span id="drawerDbStatusText">Neon PostgreSQL Ativo</span>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 8px;">
+      <button class="btn-nav-action" style="width: 100%; justify-content: center; padding: 10px;" onclick="openNewAppointmentModal(); closeMobileDrawer();">
+        + Novo Agendamento
+      </button>
+      <button class="btn-nav-outline" style="width: 100%; justify-content: center; padding: 9px;" onclick="openNewTransactionModal(); closeMobileDrawer();">
+        + Novo Lançamento
+      </button>
+    </div>
+
+    <div class="drawer-section-title">Abas do Painel</div>
+    <nav class="drawer-nav-list">
+      <button class="drawer-nav-item active" data-tab="dashboard" onclick="switchTab('dashboard'); closeMobileDrawer();">
+        <span>📊</span>
+        <span>Visão Geral & Gráficos</span>
+      </button>
+      <button class="drawer-nav-item" data-tab="appointments" onclick="switchTab('appointments'); closeMobileDrawer();">
+        <span>📅</span>
+        <span>Agendamentos</span>
+      </button>
+      <button class="drawer-nav-item" data-tab="finances" onclick="switchTab('finances'); closeMobileDrawer();">
+        <span>💰</span>
+        <span>Financeiro Completo</span>
+      </button>
+      <button class="drawer-nav-item" data-tab="inventory" onclick="switchTab('inventory'); closeMobileDrawer();">
+        <span>📦</span>
+        <span>Controle de Estoque</span>
+      </button>
+      <button class="drawer-nav-item" data-tab="availability" onclick="switchTab('availability'); closeMobileDrawer();">
+        <span>⏰</span>
+        <span>Horários & Folgas</span>
+      </button>
+      <button class="drawer-nav-item" data-tab="services" onclick="switchTab('services'); closeMobileDrawer();">
+        <span>💄</span>
+        <span>Catálogo de Serviços</span>
+      </button>
+    </nav>
+
+    <div class="drawer-section-title">Acesso Rápido</div>
+    <div class="drawer-extra-links">
+      <a href="agendamento.html" class="drawer-link-card">
+        <span>📅 Ver Tela de Agendamento</span>
+        <span>→</span>
+      </a>
+      <a href="index.html" class="drawer-link-card">
+        <span>✨ Ver Página Principal</span>
+        <span>→</span>
+      </a>
+      <button type="button" class="drawer-link-card" onclick="toggleNotificationPermission()">
+        <span>🔔 Notificações em Tempo Real</span>
+        <span id="drawerNotificationStatus" style="color: var(--champagne-dark); font-weight: 700;">Ativar</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Top Nav -->
+  <header class="admin-nav">
+    <a href="index.html" class="nav-brand">
+      <div class="brand-title">Geovanna <span>Macedo</span></div>
+      <span class="badge-pill">Painel Admin</span>
+    </a>
+
+    <!-- Desktop Nav Actions -->
+    <div class="nav-actions-desktop">
+      <button type="button" class="btn-notification-bell" id="btnNotificationPermission" onclick="toggleNotificationPermission()" title="Ativar Notificações">
+        <span>🔔</span>
+        <span id="notificationBtnText">Notificações</span>
+        <span class="bell-badge" id="bellBadge">0</span>
+      </button>
+
+      <a href="agendamento.html" class="btn-nav-outline" title="Ver tela de agendamento">
+        📅 Ver Agendamento
+      </a>
+      <div class="db-status-badge" id="dbStatusBadge">
+        <div class="db-dot"></div>
+        <span id="dbStatusText">Neon Conectado</span>
+      </div>
+      <button class="btn-nav-action" onclick="openNewAppointmentModal()">
+        + Novo Agendamento
+      </button>
+      <button class="btn-nav-outline" onclick="openNewTransactionModal()">
+        + Lançamento
+      </button>
+    </div>
+
+    <!-- Mobile / Tablet Nav Actions -->
+    <div class="nav-actions-mobile">
+      <button type="button" class="btn-notification-bell" style="padding: 7px 10px;" onclick="toggleNotificationPermission()" title="Notificações">
+        <span>🔔</span>
+        <span class="bell-badge" id="bellBadgeMobile">0</span>
+      </button>
+      <button class="btn-nav-action" style="padding: 7px 12px; font-size: 11px;" onclick="openNewAppointmentModal()">
+        + Novo
+      </button>
+      <button class="hamburger-btn" id="hamburgerBtn" onclick="toggleMobileDrawer()" aria-label="Abrir menu">
+        <span class="hamburger-bar"></span>
+        <span class="hamburger-bar"></span>
+        <span class="hamburger-bar"></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Container -->
+  <main class="admin-container">
+    <!-- Abas de Navegação -->
+    <nav class="tabs-bar">
+      <button class="tab-btn active" data-tab="dashboard" onclick="switchTab('dashboard', this)">📊 Visão Geral &
+        Gráficos</button>
+      <button class="tab-btn" data-tab="appointments" onclick="switchTab('appointments', this)">📅 Agendamentos</button>
+      <button class="tab-btn" data-tab="finances" onclick="switchTab('finances', this)">💰 Financeiro Completo</button>
+      <button class="tab-btn" data-tab="inventory" onclick="switchTab('inventory', this)">📦 Controle de
+        Estoque</button>
+      <button class="tab-btn" data-tab="availability" onclick="switchTab('availability', this)">⏰ Horários &
+        Folgas</button>
+      <button class="tab-btn" data-tab="services" onclick="switchTab('services', this)">💄 Serviços</button>
+    </nav>
+
+    <!-- ============================================== -->
+    <!-- 1. ABA: DASHBOARD & MÉTRICAS (COM FILTRO DE/ATÉ)-->
+    <!-- ============================================== -->
+    <section id="viewDashboard" class="view-section active">
+      <!-- Filtro de Período Rápido + Intervalo Customizado De / Até -->
+      <div class="period-filter-bar">
+        <div class="period-pills">
+          <button class="period-pill" onclick="changePeriod('dia', this)">Hoje</button>
+          <button class="period-pill" onclick="changePeriod('semana', this)">Esta Semana</button>
+          <button class="period-pill active" onclick="changePeriod('mes', this)">Este Mês</button>
+          <button class="period-pill" onclick="changePeriod('ano', this)">Este Ano</button>
+          <button class="period-pill" onclick="changePeriod('todos', this)">Geral</button>
+        </div>
+
+        <div class="custom-date-box">
+          <span>De:</span>
+          <input type="date" id="dashStartDate" class="date-input-mini" />
+          <span>Até:</span>
+          <input type="date" id="dashEndDate" class="date-input-mini" />
+          <button class="btn-mini-apply" onclick="applyCustomDateFilter()">Filtrar Período</button>
+        </div>
+      </div>
+
+      <!-- KPI Summary Cards -->
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-title">
+            <span>Faturamento Bruto</span>
+            <span>💰</span>
+          </div>
+          <div class="kpi-value gold" id="kpiRevenue">R$ 0,00</div>
+          <div class="kpi-sub" id="kpiRevenueSub">Total de receitas no período</div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-title">
+            <span>Despesas Totais</span>
+            <span>📉</span>
+          </div>
+          <div class="kpi-value red" id="kpiExpenses">R$ 0,00</div>
+          <div class="kpi-sub">Custos e compras registradas</div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-title">
+            <span>Lucro Líquido</span>
+            <span>✨</span>
+          </div>
+          <div class="kpi-value green" id="kpiProfit">R$ 0,00</div>
+          <div class="kpi-sub">Receitas menos despesas</div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-title">
+            <span>Agendamentos</span>
+            <span>📅</span>
+          </div>
+          <div class="kpi-value" id="kpiAppointments">0</div>
+          <div class="kpi-sub" id="kpiCompletedSub">0 concluídos</div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-title">
+            <span>Ticket Médio</span>
+            <span>💎</span>
+          </div>
+          <div class="kpi-value" id="kpiTicket">R$ 0,00</div>
+          <div class="kpi-sub">Média por atendimento</div>
+        </div>
+      </div>
+
+      <!-- Gráficos Minimalistas -->
+      <div class="charts-grid">
+        <div class="chart-card">
+          <div class="chart-header">
+            <h3 class="chart-title">Evolução Financeira (Receitas vs Despesas)</h3>
+            <span class="badge-pill">Fluxo</span>
+          </div>
+          <div class="chart-box">
+            <canvas id="timelineChart"></canvas>
+          </div>
+        </div>
+
+        <div class="chart-card">
+          <div class="chart-header">
+            <h3 class="chart-title">Distribuição por Serviço</h3>
+            <span class="badge-pill">Categorias</span>
+          </div>
+          <div class="chart-box">
+            <canvas id="categoryChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- 2. ABA: GESTÃO DE AGENDAMENTOS (CRUD)          -->
+    <!-- ============================================== -->
+    <section id="viewAppointments" class="view-section">
+      <div class="panel-card">
+        <div class="panel-header">
+          <h2 class="panel-title">Agendamentos</h2>
+          <div class="filter-group">
+            <input type="text" id="appSearchInput" class="search-input" placeholder="Buscar cliente, serviço..."
+              oninput="filterAppointments()" />
+            <select id="appStatusFilter" class="select-filter" onchange="filterAppointments()">
+              <option value="todos">Todos os Status</option>
+              <option value="pendente">Pendentes</option>
+              <option value="confirmado">Confirmados</option>
+              <option value="concluido">Concluídos</option>
+              <option value="cancelado">Cancelados</option>
+            </select>
+            <button class="btn-nav-action" onclick="openNewAppointmentModal()">+ Novo</button>
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table>
+            <thead>
+              <tr>
+                <th>Data / Hora</th>
+                <th>Cliente</th>
+                <th>WhatsApp</th>
+                <th>Serviço</th>
+                <th>Valor</th>
+                <th>Status</th>
+                <th>Pagamento</th>
+                <th style="text-align: right;">Ações</th>
+              </tr>
+            </thead>
+            <tbody id="appointmentsTableBody">
+              <tr>
+                <td colspan="8" style="text-align: center; color: var(--text-muted); padding: 30px;">Carregando
+                  agendamentos...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- 3. ABA: CONTROLE FINANCEIRO (LIVRO CAIXA)       -->
+    <!-- ============================================== -->
+    <section id="viewFinances" class="view-section">
+      <div class="panel-card">
+        <div class="panel-header">
+          <h2 class="panel-title">Livro Caixa & Lançamentos</h2>
+          <div class="filter-group">
+            <select id="finTypeFilter" class="select-filter" onchange="loadFinances()">
+              <option value="todos">Todos os Tipos</option>
+              <option value="receita">Receitas (+)</option>
+              <option value="despesa">Despesas (-)</option>
+            </select>
+            <button class="btn-nav-action" onclick="openNewTransactionModal()">+ Novo Lançamento</button>
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table>
+            <thead>
+              <tr>
+                <th>Data</th>
+                <th>Tipo</th>
+                <th>Categoria</th>
+                <th>Descrição</th>
+                <th>Método</th>
+                <th>Valor</th>
+                <th>Status</th>
+                <th style="text-align: right;">Ações</th>
+              </tr>
+            </thead>
+            <tbody id="financesTableBody">
+              <tr>
+                <td colspan="8" style="text-align: center; color: var(--text-muted); padding: 30px;">Carregando
+                  finanças...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- 4. ABA: CONTROLE DE ESTOQUE                    -->
+    <!-- ============================================== -->
+    <section id="viewInventory" class="view-section">
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-title">
+            <span>Total de Produtos</span>
+            <span>📦</span>
+          </div>
+          <div class="kpi-value gold" id="kpiTotalProducts">0</div>
+          <div class="kpi-sub">Itens no catálogo</div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-title">
+            <span>Unidades em Estoque</span>
+            <span>🔢</span>
+          </div>
+          <div class="kpi-value" id="kpiTotalUnits">0</div>
+          <div class="kpi-sub">Unidades disponíveis</div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-title">
+            <span>Valor em Estoque</span>
+            <span>💵</span>
+          </div>
+          <div class="kpi-value green" id="kpiInventoryValue">R$ 0,00</div>
+          <div class="kpi-sub">Custo total investido</div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-title">
+            <span>Estoque Baixo</span>
+            <span>⚠️</span>
+          </div>
+          <div class="kpi-value red" id="kpiLowStockCount">0</div>
+          <div class="kpi-sub">Precisando reposição</div>
+        </div>
+      </div>
+
+      <div class="panel-card">
+        <div class="panel-header">
+          <h2 class="panel-title">Produtos & Cosméticos</h2>
+          <button class="btn-nav-action" onclick="openNewInventoryModal()">+ Novo Produto</button>
+        </div>
+
+        <div class="table-responsive">
+          <table>
+            <thead>
+              <tr>
+                <th>Produto</th>
+                <th>Categoria</th>
+                <th>Estoque Atual</th>
+                <th>Mínimo</th>
+                <th>Preço de Custo</th>
+                <th>Fornecedor</th>
+                <th>Última Reposição</th>
+                <th style="text-align: right;">Ações</th>
+              </tr>
+            </thead>
+            <tbody id="inventoryTableBody">
+              <tr>
+                <td colspan="8" style="text-align: center; color: var(--text-muted); padding: 30px;">Carregando
+                  estoque...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- 5. ABA: HORÁRIOS & BLOQUEIO DE DIAS / FOLGAS   -->
+    <!-- ============================================== -->
+    <section id="viewAvailability" class="view-section">
+      <!-- Dias da Semana de Atendimento -->
+      <div class="panel-card">
+        <div class="panel-header">
+          <h2 class="panel-title">Dias de Atendimento na Semana</h2>
+          <span class="badge-pill">Disponibilidade Geral</span>
+        </div>
+        <p style="font-size: 13px; color: var(--text-muted);">
+          Clique nos dias da semana para ativar ou desativar o atendimento (dias dourados estão liberados para
+          agendamento):
+        </p>
+        <div class="days-toggle-grid" id="daysToggleGrid">
+          <button class="day-pill-toggle" data-day="0" onclick="toggleActiveDay(0, this)">Domingo</button>
+          <button class="day-pill-toggle active" data-day="1" onclick="toggleActiveDay(1, this)">Segunda</button>
+          <button class="day-pill-toggle active" data-day="2" onclick="toggleActiveDay(2, this)">Terça</button>
+          <button class="day-pill-toggle active" data-day="3" onclick="toggleActiveDay(3, this)">Quarta</button>
+          <button class="day-pill-toggle active" data-day="4" onclick="toggleActiveDay(4, this)">Quinta</button>
+          <button class="day-pill-toggle active" data-day="5" onclick="toggleActiveDay(5, this)">Sexta</button>
+          <button class="day-pill-toggle active" data-day="6" onclick="toggleActiveDay(6, this)">Sábado</button>
+        </div>
+      </div>
+
+      <!-- Gerenciador de Horários (1 a 1) -->
+      <div class="panel-card">
+        <div class="panel-header">
+          <h2 class="panel-title">Horários de Atendimento</h2>
+          <div style="display: flex; gap: 8px; align-items: center;">
+            <input type="time" id="newTimeInput" class="form-control" style="padding: 6px 12px; width: 120px;"
+              value="09:00" />
+            <button class="btn-nav-action" onclick="addCustomTimeSlot()">+ Adicionar Horário</button>
+          </div>
+        </div>
+        <p style="font-size: 13px; color: var(--text-muted);">
+          Estes são os horários que aparecerão no formulário de agendamento do cliente. Adicione ou remova
+          individualmente:
+        </p>
+        <div class="times-manager-grid" id="timesManagerGrid">
+          <!-- Chips de horários carregados dinamicamente -->
+        </div>
+      </div>
+
+      <!-- Bloqueio de Dias Específicos / Folgas / Férias -->
+      <div class="panel-card">
+        <div class="panel-header">
+          <h2 class="panel-title">Bloquear Dias de Folga / Férias</h2>
+          <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+            <input type="date" id="blockDateInput" class="form-control" style="padding: 6px 12px;" />
+            <input type="text" id="blockReasonInput" class="form-control" placeholder="Motivo (ex: Férias, Folga)"
+              style="padding: 6px 12px; width: 180px;" />
+            <button class="btn-nav-action" onclick="submitBlockDate()">+ Bloquear Dia</button>
+          </div>
+        </div>
+        <div class="table-responsive">
+          <table>
+            <thead>
+              <tr>
+                <th>Data Bloqueada</th>
+                <th>Motivo / Descrição</th>
+                <th style="text-align: right;">Ação</th>
+              </tr>
+            </thead>
+            <tbody id="blockedDatesTableBody">
+              <tr>
+                <td colspan="3" style="text-align: center; color: var(--text-muted); padding: 20px;">Nenhum dia
+                  bloqueado.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- 6. ABA: CATÁLOGO DE SERVIÇOS                   -->
+    <!-- ============================================== -->
+    <section id="viewServices" class="view-section">
+      <div class="panel-card">
+        <div class="panel-header">
+          <h2 class="panel-title">Catálogo de Serviços</h2>
+          <span class="badge-pill">Atendimentos Ativos</span>
+        </div>
+
+        <div class="table-responsive">
+          <table>
+            <thead>
+              <tr>
+                <th>Nome do Serviço</th>
+                <th>Duração</th>
+                <th>Preço</th>
+                <th>Descrição</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="servicesTableBody">
+              <tr>
+                <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 30px;">Carregando
+                  serviços...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============================================== -->
+  <!-- MODAIS                                         -->
+  <!-- ============================================== -->
+
+  <!-- Modal Agendamento -->
+  <div class="modal-backdrop" id="modalAppointment">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title" id="modalAppTitle">Novo Agendamento</h3>
+        <button class="modal-close" onclick="closeModal('modalAppointment')">✕</button>
+      </div>
+
+      <form id="formAppointment" onsubmit="handleSaveAppointment(event)">
+        <input type="hidden" id="appId" />
+
+        <div class="form-group">
+          <label class="form-label" for="formClientName">Nome da Cliente</label>
+          <input type="text" id="formClientName" class="form-control" required placeholder="Ex: Maria Silva" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="formClientPhone">WhatsApp</label>
+          <input type="tel" id="formClientPhone" class="form-control" required placeholder="(86) 99999-9999" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="formServiceName">Serviço</label>
+          <select id="formServiceName" class="form-control" onchange="handleServiceSelectChange()" required>
+            <option value="Maquiagem Social" data-price="160">Maquiagem Social (R$ 160,00)</option>
+            <option value="Noiva (Produção Completa)" data-price="450">Noiva - Produção Completa (R$ 450,00)</option>
+            <option value="Formanda Glam" data-price="220">Formanda Glam (R$ 220,00)</option>
+            <option value="Penteado Exclusivo" data-price="140">Penteado Exclusivo (R$ 140,00)</option>
+            <option value="Combo Make + Penteado" data-price="280">Combo Make + Penteado (R$ 280,00)</option>
+          </select>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+          <div class="form-group">
+            <label class="form-label" for="formAppDate">Data</label>
+            <input type="date" id="formAppDate" class="form-control" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="formAppTime">Horário</label>
+            <input type="time" id="formAppTime" class="form-control" required />
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+          <div class="form-group">
+            <label class="form-label" for="formAppPrice">Preço (R$)</label>
+            <input type="number" step="0.01" id="formAppPrice" class="form-control" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="formAppStatus">Status</label>
+            <select id="formAppStatus" class="form-control">
+              <option value="pendente">Pendente</option>
+              <option value="confirmado">Confirmado</option>
+              <option value="concluido">Concluído</option>
+              <option value="cancelado">Cancelado</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="formPaymentStatus">Status do Pagamento</label>
+          <select id="formPaymentStatus" class="form-control">
+            <option value="pendente">Pendente</option>
+            <option value="sinal_pago">Sinal Pago (50%)</option>
+            <option value="pago_total">Total Pago (100%)</option>
+          </select>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-nav-outline" onclick="closeModal('modalAppointment')">Cancelar</button>
+          <button type="submit" class="btn-submit">Salvar Agendamento</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Transação Financeira -->
+  <div class="modal-backdrop" id="modalTransaction">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">Novo Lançamento Financeiro</h3>
+        <button class="modal-close" onclick="closeModal('modalTransaction')">✕</button>
+      </div>
+
+      <form id="formTransaction" onsubmit="handleSaveTransaction(event)">
+        <div class="form-group">
+          <label class="form-label" for="txType">Tipo de Movimento</label>
+          <select id="txType" class="form-control" required>
+            <option value="receita">Receita / Entrada (+)</option>
+            <option value="despesa">Despesa / Saída (-)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="txCategory">Categoria</label>
+          <input type="text" id="txCategory" class="form-control" required
+            placeholder="Ex: Produtos, Noiva, Salão, Aluguel" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="txDescription">Descrição</label>
+          <input type="text" id="txDescription" class="form-control" required
+            placeholder="Ex: Compra de Cílios e Bases" />
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+          <div class="form-group">
+            <label class="form-label" for="txAmount">Valor (R$)</label>
+            <input type="number" step="0.01" id="txAmount" class="form-control" required placeholder="0.00" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="txDate">Data</label>
+            <input type="date" id="txDate" class="form-control" required />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="txMethod">Método de Pagamento</label>
+          <select id="txMethod" class="form-control">
+            <option value="pix">PIX</option>
+            <option value="cartao_credito">Cartão de Crédito</option>
+            <option value="cartao_debito">Cartão de Débito</option>
+            <option value="dinheiro">Dinheiro</option>
+          </select>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-nav-outline" onclick="closeModal('modalTransaction')">Cancelar</button>
+          <button type="submit" class="btn-submit">Registrar Lançamento</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Produto de Estoque -->
+  <div class="modal-backdrop" id="modalInventory">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title" id="modalInvTitle">Novo Produto de Estoque</h3>
+        <button class="modal-close" onclick="closeModal('modalInventory')">✕</button>
+      </div>
+
+      <form id="formInventory" onsubmit="handleSaveInventory(event)">
+        <input type="hidden" id="invId" />
+
+        <div class="form-group">
+          <label class="form-label" for="invName">Nome do Produto</label>
+          <input type="text" id="invName" class="form-control" required placeholder="Ex: Base Kryolan Dermacolor" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="invCategory">Categoria</label>
+          <select id="invCategory" class="form-control" required>
+            <option value="Maquiagem">Maquiagem</option>
+            <option value="Penteados">Penteados</option>
+            <option value="Descartáveis">Descartáveis</option>
+            <option value="Skin Care">Skin Care</option>
+            <option value="Geral">Geral</option>
+          </select>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+          <div class="form-group">
+            <label class="form-label" for="invQuantity">Quantidade Inicial</label>
+            <input type="number" id="invQuantity" class="form-control" required min="0" value="1" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="invMinQuantity">Estoque Mínimo (Alerta)</label>
+            <input type="number" id="invMinQuantity" class="form-control" required min="1" value="2" />
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+          <div class="form-group">
+            <label class="form-label" for="invCostPrice">Preço de Custo (R$)</label>
+            <input type="number" step="0.01" id="invCostPrice" class="form-control" placeholder="0.00" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="invSupplier">Fornecedor</label>
+            <input type="text" id="invSupplier" class="form-control" placeholder="Ex: Distribuidora Glam" />
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-nav-outline" onclick="closeModal('modalInventory')">Cancelar</button>
+          <button type="submit" class="btn-submit">Salvar Produto</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- JavaScript do Painel & Notificações em Tempo Real -->
+  <script>
+    let currentPeriod = 'mes';
+    let rawAppointments = [];
+    let rawInventory = [];
+    let availabilityData = { active_days: [1, 2, 3, 4, 5, 6], custom_times: [], blocked_dates: [] };
+    let timelineChartInstance = null;
+    let categoryChartInstance = null;
+
+    // Sistema de Notificações
+    let knownAppointmentIds = new Set();
+    let isInitialLoad = true;
+    let unreadCount = 0;
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      // Inicializa inputs de data De / Até
+      const now = new Date();
+      const firstDay = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
+      const today = now.toISOString().split('T')[0];
+      document.getElementById('dashStartDate').value = firstDay;
+      document.getElementById('dashEndDate').value = today;
+
+      checkDbStatus();
+      updateNotificationBtnState();
+      await loadMetrics();
+      await loadAppointments();
+      await loadFinances();
+      await loadInventory();
+      await loadAvailability();
+      await loadServices();
+
+      // Inicia polling de novos agendamentos a cada 5 segundos
+      setInterval(pollNewAppointments, 5000);
+    });
+
+    // ==============================================
+    // CONTROLE DO MENU HAMBURGUER / DRAWER MOBILE
+    // ==============================================
+    function toggleMobileDrawer() {
+      const drawer = document.getElementById('mobileDrawer');
+      const backdrop = document.getElementById('drawerBackdrop');
+      const btn = document.getElementById('hamburgerBtn');
+
+      const isOpen = drawer.classList.contains('open');
+      if (isOpen) {
+        closeMobileDrawer();
+      } else {
+        drawer.classList.add('open');
+        backdrop.classList.add('open');
+        btn.classList.add('open');
+        document.body.style.overflow = 'hidden';
+      }
+    }
+
+    function closeMobileDrawer() {
+      const drawer = document.getElementById('mobileDrawer');
+      const backdrop = document.getElementById('drawerBackdrop');
+      const btn = document.getElementById('hamburgerBtn');
+
+      drawer.classList.remove('open');
+      backdrop.classList.remove('open');
+      btn.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeMobileDrawer();
+    });
+
+    // ==============================================
+    // SISTEMA DE NOTIFICAÇÕES (AUDIO CHIME, TOAST & PUSH)
+    // ==============================================
+    function playNotificationSound() {
+      try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!AudioCtx) return;
+        const ctx = new AudioCtx();
+        const now = ctx.currentTime;
+
+        // Nota 1 (A5 - 880Hz)
+        const osc1 = ctx.createOscillator();
+        const gain1 = ctx.createGain();
+        osc1.type = 'sine';
+        osc1.frequency.setValueAtTime(880, now);
+        gain1.gain.setValueAtTime(0.25, now);
+        gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+        osc1.connect(gain1);
+        gain1.connect(ctx.destination);
+        osc1.start(now);
+        osc1.stop(now + 0.35);
+
+        // Nota 2 (E6 - 1318.5Hz) - toque elegante
+        const osc2 = ctx.createOscillator();
+        const gain2 = ctx.createGain();
+        osc2.type = 'sine';
+        osc2.frequency.setValueAtTime(1318.51, now + 0.12);
+        gain2.gain.setValueAtTime(0.35, now + 0.12);
+        gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.65);
+        osc2.connect(gain2);
+        gain2.connect(ctx.destination);
+        osc2.start(now + 0.12);
+        osc2.stop(now + 0.65);
+      } catch (e) {
+        console.warn('AudioContext notification sound failed:', e);
+      }
+    }
+
+    function showInAppToast(appointment) {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = 'toast-card';
+
+      toast.innerHTML = `
+        <div class="toast-icon-bubble">✨</div>
+        <div class="toast-content">
+          <div class="toast-title">Novo Agendamento Recebido!</div>
+          <div class="toast-body">
+            <strong>${appointment.client_name}</strong> agendou <strong>${appointment.service_name}</strong> para <strong>${appointment.appointment_date}</strong> às <strong>${appointment.appointment_time}</strong>.
+          </div>
+          <a class="toast-btn-action" onclick="goToAppointmentsTab()">Ver Agendamentos →</a>
+        </div>
+      `;
+
+      container.appendChild(toast);
+
+      // Auto remove após 8 segundos
+      setTimeout(() => {
+        toast.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(100%)';
+        setTimeout(() => toast.remove(), 400);
+      }, 8000);
+    }
+
+    function goToAppointmentsTab() {
+      switchTab('appointments', document.querySelector('.tab-btn[data-tab="appointments"]'));
+      unreadCount = 0;
+      updateNotificationBtnState();
+    }
+
+    async function toggleNotificationPermission() {
+      if (!('Notification' in window)) {
+        alert('Este navegador não suporta notificações de área de trabalho.');
+        return;
+      }
+
+      if (Notification.permission === 'granted') {
+        playNotificationSound();
+        showInAppToast({
+          client_name: 'Teste do Sistema',
+          service_name: 'Notificações Ativas',
+          appointment_date: 'Hoje',
+          appointment_time: 'Agora'
+        });
+        return;
+      }
+
+      const permission = await Notification.requestPermission();
+      updateNotificationBtnState();
+
+      if (permission === 'granted') {
+        playNotificationSound();
+        new Notification('✨ Geovanna Macedo — Notificações Ativadas!', {
+          body: 'Você receberá avisos sonoros e visuais a cada novo agendamento de cliente.',
+          icon: 'img/geovana_clean.jpg'
+        });
+      }
+    }
+
+    function updateNotificationBtnState() {
+      const text = document.getElementById('notificationBtnText');
+      const badge = document.getElementById('bellBadge');
+      const badgeMobile = document.getElementById('bellBadgeMobile');
+      const drawerStatus = document.getElementById('drawerNotificationStatus');
+
+      const isGranted = ('Notification' in window && Notification.permission === 'granted');
+      if (isGranted) {
+        if (text) text.textContent = 'Notificações Ativas';
+        if (drawerStatus) drawerStatus.textContent = '✓ Ativas';
+      } else {
+        if (text) text.textContent = 'Ativar Notificações';
+        if (drawerStatus) drawerStatus.textContent = 'Ativar';
+      }
+
+      if (unreadCount > 0) {
+        if (badge) { badge.style.display = 'inline-block'; badge.textContent = unreadCount; }
+        if (badgeMobile) { badgeMobile.style.display = 'inline-block'; badgeMobile.textContent = unreadCount; }
+      } else {
+        if (badge) badge.style.display = 'none';
+        if (badgeMobile) badgeMobile.style.display = 'none';
+      }
+    }
+
+    async function pollNewAppointments() {
+      try {
+        const res = await fetch('/api/appointments');
+        const json = await res.json();
+        if (!json.success || !Array.isArray(json.data)) return;
+
+        const currentList = json.data;
+
+        if (isInitialLoad) {
+          currentList.forEach(a => knownAppointmentIds.add(a.id));
+          isInitialLoad = false;
+          return;
+        }
+
+        let newAppointments = [];
+        currentList.forEach(a => {
+          if (!knownAppointmentIds.has(a.id)) {
+            knownAppointmentIds.add(a.id);
+            newAppointments.push(a);
+          }
+        });
+
+        if (newAppointments.length > 0) {
+          playNotificationSound();
+
+          newAppointments.forEach(a => {
+            showInAppToast(a);
+
+            if ('Notification' in window && Notification.permission === 'granted') {
+              new Notification('✨ Novo Agendamento — Geovanna Macedo', {
+                body: `${a.client_name} agendou ${a.service_name} para ${a.appointment_date} às ${a.appointment_time}!`,
+                icon: 'img/geovana_clean.jpg'
+              });
+            }
+          });
+
+          unreadCount += newAppointments.length;
+          updateNotificationBtnState();
+
+          rawAppointments = currentList;
+          filterAppointments();
+          loadMetrics();
+        }
+      } catch (e) {
+        console.warn('Erro no polling de agendamentos:', e);
+      }
+    }
+
+    // Alternar Abas
+    function switchTab(tabId, el) {
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.drawer-nav-item').forEach(item => item.classList.remove('active'));
+      document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
+
+      if (el) {
+        el.classList.add('active');
+      } else {
+        const btn = document.querySelector(`.tab-btn[data-tab="${tabId}"]`);
+        if (btn) btn.classList.add('active');
+      }
+
+      const drawerItem = document.querySelector(`.drawer-nav-item[data-tab="${tabId}"]`);
+      if (drawerItem) drawerItem.classList.add('active');
+
+      if (tabId === 'dashboard') {
+        document.getElementById('viewDashboard').classList.add('active');
+        loadMetrics();
+      } else if (tabId === 'appointments') {
+        document.getElementById('viewAppointments').classList.add('active');
+        unreadCount = 0;
+        updateNotificationBtnState();
+        loadAppointments();
+      } else if (tabId === 'finances') {
+        document.getElementById('viewFinances').classList.add('active');
+        loadFinances();
+      } else if (tabId === 'inventory') {
+        document.getElementById('viewInventory').classList.add('active');
+        loadInventory();
+      } else if (tabId === 'availability') {
+        document.getElementById('viewAvailability').classList.add('active');
+        loadAvailability();
+      } else if (tabId === 'services') {
+        document.getElementById('viewServices').classList.add('active');
+        loadServices();
+      }
+    }
+
+    async function checkDbStatus() {
+      try {
+        const res = await fetch('/api/config/db-status');
+        const data = await res.json();
+        const badge = document.getElementById('dbStatusBadge');
+        const text = document.getElementById('dbStatusText');
+        const drawerText = document.getElementById('drawerDbStatusText');
+
+        if (data.isNeonConnected) {
+          if (text) text.textContent = 'Neon PostgreSQL Ativo';
+          if (drawerText) drawerText.textContent = 'Neon PostgreSQL Ativo';
+          if (badge) badge.style.borderColor = 'var(--green)';
+        } else {
+          if (text) text.textContent = 'Armazenamento Local';
+          if (drawerText) drawerText.textContent = 'Armazenamento Local';
+          if (badge) badge.style.borderColor = 'var(--border-glass)';
+        }
+      } catch (e) { console.warn(e); }
+    }
+
+    function changePeriod(period, btn) {
+      document.querySelectorAll('.period-pill').forEach(p => p.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      currentPeriod = period;
+      loadMetrics();
+    }
+
+    function applyCustomDateFilter() {
+      const s = document.getElementById('dashStartDate').value;
+      const e = document.getElementById('dashEndDate').value;
+      if (!s || !e) {
+        alert('Por favor, selecione as datas Inicial e Final.');
+        return;
+      }
+      document.querySelectorAll('.period-pill').forEach(p => p.classList.remove('active'));
+      loadMetrics(s, e);
+    }
+
+    function formatCurrency(val) {
+      return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val || 0);
+    }
+
+    // Carregar Métricas e Gráficos
+    async function loadMetrics(customStart = null, customEnd = null) {
+      try {
+        let url = `/api/finances/metrics?period=${currentPeriod}`;
+        if (customStart && customEnd) {
+          url = `/api/finances/metrics?startDate=${customStart}&endDate=${customEnd}`;
+        }
+        const res = await fetch(url);
+        const json = await res.json();
+        if (!json.success) return;
+
+        const { metrics, charts } = json.data;
+
+        const rangeEl = document.getElementById('kpiRevenueSub');
+        if (customStart && customEnd) {
+          rangeEl.textContent = `Período: ${customStart} até ${customEnd}`;
+        } else if (currentPeriod === 'dia') rangeEl.textContent = 'Métricas de Hoje';
+        else if (currentPeriod === 'semana') rangeEl.textContent = 'Semana atual';
+        else if (currentPeriod === 'mes') rangeEl.textContent = 'Mês atual';
+        else if (currentPeriod === 'ano') rangeEl.textContent = 'Ano corrente';
+        else rangeEl.textContent = 'Histórico Geral';
+
+        document.getElementById('kpiRevenue').textContent = formatCurrency(metrics.totalRevenue);
+        document.getElementById('kpiExpenses').textContent = formatCurrency(metrics.totalExpenses);
+        document.getElementById('kpiProfit').textContent = formatCurrency(metrics.netProfit);
+        document.getElementById('kpiAppointments').textContent = metrics.totalAppointments;
+        document.getElementById('kpiCompletedSub').textContent = `${metrics.completedAppointments} concluídos (${metrics.pendingAppointments} pendentes)`;
+        document.getElementById('kpiTicket').textContent = formatCurrency(metrics.averageTicket);
+
+        renderTimelineChart(charts.timeline);
+        renderCategoryChart(charts.categories);
+      } catch (e) {
+        console.error('Erro ao carregar métricas:', e);
+      }
+    }
+
+    function renderTimelineChart(data) {
+      const ctx = document.getElementById('timelineChart').getContext('2d');
+      if (timelineChartInstance) timelineChartInstance.destroy();
+
+      timelineChartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: data.labels,
+          datasets: [
+            {
+              label: 'Receitas (R$)',
+              data: data.revenue,
+              borderColor: '#A88661',
+              backgroundColor: 'rgba(214, 189, 159, 0.25)',
+              borderWidth: 2.5,
+              tension: 0.35,
+              fill: true,
+              pointBackgroundColor: '#FFFFFF',
+              pointBorderColor: '#A88661',
+              pointRadius: 4
+            },
+            {
+              label: 'Despesas (R$)',
+              data: data.expenses,
+              borderColor: '#E1C1B6',
+              backgroundColor: 'rgba(225, 193, 182, 0.2)',
+              borderWidth: 2,
+              tension: 0.35,
+              fill: true,
+              pointBackgroundColor: '#E1C1B6',
+              pointRadius: 3
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { labels: { color: '#54443C', font: { family: 'Plus Jakarta Sans', size: 11, weight: '600' } } }
+          },
+          scales: {
+            x: {
+              grid: { color: 'rgba(0, 0, 0, 0.04)' },
+              ticks: { color: '#82726A', font: { family: 'Plus Jakarta Sans', size: 11 } }
+            },
+            y: {
+              grid: { color: 'rgba(0, 0, 0, 0.04)' },
+              ticks: {
+                color: '#82726A',
+                font: { family: 'Plus Jakarta Sans', size: 11 },
+                callback: (val) => `R$ ${val}`
+              }
+            }
+          }
+        }
+      });
+    }
+
+    function renderCategoryChart(data) {
+      const ctx = document.getElementById('categoryChart').getContext('2d');
+      if (categoryChartInstance) categoryChartInstance.destroy();
+
+      categoryChartInstance = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: data.labels,
+          datasets: [{
+            data: data.values,
+            backgroundColor: ['#D6BD9F', '#E1C1B6', '#EAD8C3', '#A88661', '#F4E8E3'],
+            borderColor: '#FFFFFF',
+            borderWidth: 3
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: { color: '#54443C', font: { family: 'Plus Jakarta Sans', size: 11, weight: '500' }, boxWidth: 10 }
+            }
+          },
+          cutout: '70%'
+        }
+      });
+    }
+
+    // ==============================================
+    // CRUD: AGENDAMENTOS
+    // ==============================================
+    async function loadAppointments() {
+      try {
+        const res = await fetch('/api/appointments');
+        const json = await res.json();
+        if (json.success) {
+          rawAppointments = json.data;
+          renderAppointmentsTable(rawAppointments);
+        }
+      } catch (e) { console.error('Erro ao carregar agendamentos:', e); }
+    }
+
+    function filterAppointments() {
+      const search = document.getElementById('appSearchInput').value.toLowerCase();
+      const status = document.getElementById('appStatusFilter').value;
+
+      const filtered = rawAppointments.filter(a => {
+        const matchStatus = status === 'todos' || a.status === status;
+        const matchSearch = !search ||
+          a.client_name.toLowerCase().includes(search) ||
+          a.client_phone.includes(search) ||
+          a.service_name.toLowerCase().includes(search);
+        return matchStatus && matchSearch;
+      });
+
+      renderAppointmentsTable(filtered);
+    }
+
+    function renderAppointmentsTable(list) {
+      const tbody = document.getElementById('appointmentsTableBody');
+      if (list.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="8" style="text-align: center; color: var(--text-muted); padding: 30px;">Nenhum agendamento encontrado.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = list.map(a => {
+        const cleanPhone = (a.client_phone || '').replace(/\D/g, '');
+        const waNumber = cleanPhone.startsWith('55') ? cleanPhone : `55${cleanPhone}`;
+        const waLink = `https://wa.me/${waNumber}?text=${encodeURIComponent(`Olá, ${a.client_name}! Confirmamos seu agendamento de ${a.service_name} com Geovanna Macedo para ${a.appointment_date} às ${a.appointment_time}. ✨`)}`;
+
+        return `
+          <tr>
+            <td>
+              <strong>${a.appointment_date}</strong><br>
+              <span style="font-size: 11px; color: var(--champagne-dark); font-weight: 600;">🕒 ${a.appointment_time}</span>
+            </td>
+            <td><strong>${a.client_name}</strong></td>
+            <td>${a.client_phone}</td>
+            <td>${a.service_name}</td>
+            <td><strong>${formatCurrency(a.price)}</strong></td>
+            <td><span class="status-badge status-${a.status}">${a.status}</span></td>
+            <td>
+              <span style="font-size: 11px; font-weight: 600; color: ${a.payment_status === 'pago_total' ? 'var(--green)' : a.payment_status === 'sinal_pago' ? 'var(--champagne-dark)' : 'var(--text-muted)'};">
+                ${a.payment_status === 'pago_total' ? '✓ Total Pago' : a.payment_status === 'sinal_pago' ? '✦ Sinal Pago' : 'Pendente'}
+              </span>
+            </td>
+            <td style="text-align: right;">
+              <div class="action-btn-group" style="justify-content: flex-end;">
+                <a href="${waLink}" target="_blank" class="action-icon-btn whatsapp" title="Enviar WhatsApp">💬</a>
+                <button class="action-icon-btn" onclick="quickUpdateStatus(${a.id}, 'confirmado')" title="Confirmar">✓</button>
+                <button class="action-icon-btn" onclick="quickUpdateStatus(${a.id}, 'concluido')" title="Concluir">🏁</button>
+                <button class="action-icon-btn" onclick="openEditAppointmentModal(${a.id})" title="Editar">✏️</button>
+                <button class="action-icon-btn delete" onclick="deleteAppointment(${a.id})" title="Excluir">🗑️</button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function openNewAppointmentModal() {
+      document.getElementById('modalAppTitle').textContent = 'Novo Agendamento';
+      document.getElementById('appId').value = '';
+      document.getElementById('formClientName').value = '';
+      document.getElementById('formClientPhone').value = '';
+      document.getElementById('formAppDate').value = new Date().toISOString().split('T')[0];
+      document.getElementById('formAppTime').value = '14:00';
+      document.getElementById('formAppPrice').value = '160.00';
+      document.getElementById('formAppStatus').value = 'pendente';
+      document.getElementById('formPaymentStatus').value = 'pendente';
+      document.getElementById('modalAppointment').classList.add('open');
+    }
+
+    function openEditAppointmentModal(id) {
+      const app = rawAppointments.find(a => a.id === id);
+      if (!app) return;
+
+      document.getElementById('modalAppTitle').textContent = 'Editar Agendamento';
+      document.getElementById('appId').value = app.id;
+      document.getElementById('formClientName').value = app.client_name;
+      document.getElementById('formClientPhone').value = app.client_phone;
+      document.getElementById('formServiceName').value = app.service_name;
+      document.getElementById('formAppDate').value = app.appointment_date;
+      document.getElementById('formAppTime').value = app.appointment_time;
+      document.getElementById('formAppPrice').value = app.price;
+      document.getElementById('formAppStatus').value = app.status;
+      document.getElementById('formPaymentStatus').value = app.payment_status;
+      document.getElementById('modalAppointment').classList.add('open');
+    }
+
+    function handleServiceSelectChange() {
+      const sel = document.getElementById('formServiceName');
+      const selectedOption = sel.options[sel.selectedIndex];
+      const price = selectedOption.getAttribute('data-price');
+      if (price) document.getElementById('formAppPrice').value = price;
+    }
+
+    async function handleSaveAppointment(e) {
+      e.preventDefault();
+      const id = document.getElementById('appId').value;
+      const payload = {
+        client_name: document.getElementById('formClientName').value,
+        client_phone: document.getElementById('formClientPhone').value,
+        service_name: document.getElementById('formServiceName').value,
+        appointment_date: document.getElementById('formAppDate').value,
+        appointment_time: document.getElementById('formAppTime').value,
+        price: parseFloat(document.getElementById('formAppPrice').value) || 0,
+        status: document.getElementById('formAppStatus').value,
+        payment_status: document.getElementById('formPaymentStatus').value
+      };
+
+      try {
+        if (id) {
+          await fetch(`/api/appointments/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+        } else {
+          await fetch('/api/appointments', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+        }
+        closeModal('modalAppointment');
+        await loadAppointments();
+        await loadMetrics();
+      } catch (err) { alert('Erro ao salvar agendamento.'); }
+    }
+
+    async function quickUpdateStatus(id, newStatus) {
+      try {
+        await fetch(`/api/appointments/${id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status: newStatus, payment_status: newStatus === 'concluido' ? 'pago_total' : 'sinal_pago' })
+        });
+        await loadAppointments();
+        await loadMetrics();
+      } catch (e) { alert('Erro ao atualizar status.'); }
+    }
+
+    async function deleteAppointment(id) {
+      if (!confirm('Deseja realmente excluir este agendamento?')) return;
+      try {
+        await fetch(`/api/appointments/${id}`, { method: 'DELETE' });
+        await loadAppointments();
+        await loadMetrics();
+      } catch (e) { alert('Erro ao excluir agendamento.'); }
+    }
+
+    // ==============================================
+    // CRUD: FINANCEIRO
+    // ==============================================
+    async function loadFinances() {
+      const type = document.getElementById('finTypeFilter').value;
+      try {
+        const res = await fetch(`/api/finances?type=${type}`);
+        const json = await res.json();
+        if (json.success) {
+          renderFinancesTable(json.data);
+        }
+      } catch (e) { console.error('Erro ao carregar finanças:', e); }
+    }
+
+    function renderFinancesTable(list) {
+      const tbody = document.getElementById('financesTableBody');
+      if (list.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="8" style="text-align: center; color: var(--text-muted); padding: 30px;">Nenhum lançamento financeiro registrado.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = list.map(t => `
+        <tr>
+          <td>${t.date}</td>
+          <td>
+            <span class="status-badge ${t.type === 'receita' ? 'status-confirmado' : 'status-cancelado'}">
+              ${t.type === 'receita' ? '▲ Receita' : '▼ Despesa'}
+            </span>
+          </td>
+          <td><strong>${t.category}</strong></td>
+          <td>${t.description}</td>
+          <td><span class="badge-pill" style="font-size: 10px;">${(t.payment_method || 'pix').toUpperCase()}</span></td>
+          <td style="color: ${t.type === 'receita' ? 'var(--green)' : 'var(--red)'}; font-weight: 700;">
+            ${t.type === 'receita' ? '+' : '-'} ${formatCurrency(t.amount)}
+          </td>
+          <td><span style="font-size: 11px; color: var(--green); font-weight: 600;">✓ Pago</span></td>
+          <td style="text-align: right;">
+            <button class="action-icon-btn delete" onclick="deleteTransaction(${t.id})" title="Excluir">🗑️</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function openNewTransactionModal() {
+      document.getElementById('txDate').value = new Date().toISOString().split('T')[0];
+      document.getElementById('txCategory').value = '';
+      document.getElementById('txDescription').value = '';
+      document.getElementById('txAmount').value = '';
+      document.getElementById('modalTransaction').classList.add('open');
+    }
+
+    async function handleSaveTransaction(e) {
+      e.preventDefault();
+      const payload = {
+        type: document.getElementById('txType').value,
+        category: document.getElementById('txCategory').value,
+        description: document.getElementById('txDescription').value,
+        amount: parseFloat(document.getElementById('txAmount').value) || 0,
+        date: document.getElementById('txDate').value,
+        payment_method: document.getElementById('txMethod').value,
+        status: 'pago'
+      };
+
+      try {
+        await fetch('/api/finances', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        closeModal('modalTransaction');
+        await loadFinances();
+        await loadMetrics();
+      } catch (err) { alert('Erro ao salvar lançamento financeiro.'); }
+    }
+
+    async function deleteTransaction(id) {
+      if (!confirm('Deseja excluir este lançamento?')) return;
+      try {
+        await fetch(`/api/finances/${id}`, { method: 'DELETE' });
+        await loadFinances();
+        await loadMetrics();
+      } catch (e) { alert('Erro ao excluir lançamento.'); }
+    }
+
+    // ==============================================
+    // CRUD: CONTROLE DE ESTOQUE
+    // ==============================================
+    async function loadInventory() {
+      try {
+        const res = await fetch('/api/inventory');
+        const json = await res.json();
+        if (!json.success) return;
+
+        rawInventory = json.data;
+        let totalUnits = 0;
+        let totalVal = 0;
+        let lowCount = 0;
+
+        rawInventory.forEach(item => {
+          totalUnits += (item.quantity || 0);
+          totalVal += (item.quantity || 0) * (parseFloat(item.cost_price) || 0);
+          if ((item.quantity || 0) <= (item.min_quantity || 2)) lowCount++;
+        });
+
+        document.getElementById('kpiTotalProducts').textContent = rawInventory.length;
+        document.getElementById('kpiTotalUnits').textContent = totalUnits;
+        document.getElementById('kpiInventoryValue').textContent = formatCurrency(totalVal);
+        document.getElementById('kpiLowStockCount').textContent = lowCount;
+
+        renderInventoryTable(rawInventory);
+      } catch (e) { console.error('Erro ao carregar estoque:', e); }
+    }
+
+    function renderInventoryTable(list) {
+      const tbody = document.getElementById('inventoryTableBody');
+      if (list.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="8" style="text-align: center; color: var(--text-muted); padding: 30px;">Nenhum produto cadastrado no estoque.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = list.map(item => {
+        const isLow = (item.quantity || 0) <= (item.min_quantity || 2);
+        return `
+          <tr>
+            <td><strong>${item.name}</strong></td>
+            <td><span class="badge-pill" style="font-size: 10px;">${item.category}</span></td>
+            <td>
+              <div style="display: inline-flex; align-items: center; gap: 8px;">
+                <button class="action-icon-btn" style="width: 26px; height: 26px;" onclick="adjustStock(${item.id}, -1)">-</button>
+                <strong style="font-size: 14px; min-width: 20px; text-align: center; color: ${isLow ? 'var(--red)' : 'var(--text-primary)'};">${item.quantity}</strong>
+                <button class="action-icon-btn" style="width: 26px; height: 26px;" onclick="adjustStock(${item.id}, 1)">+</button>
+                <span class="${isLow ? 'stock-badge-low' : 'stock-badge-ok'}">${isLow ? 'Baixo' : 'Ok'}</span>
+              </div>
+            </td>
+            <td>${item.min_quantity} un</td>
+            <td><strong>${formatCurrency(item.cost_price)}</strong></td>
+            <td>${item.supplier || '-'}</td>
+            <td>${item.last_restock || '-'}</td>
+            <td style="text-align: right;">
+              <div class="action-btn-group" style="justify-content: flex-end;">
+                <button class="action-icon-btn" onclick="openEditInventoryModal(${item.id})" title="Editar">✏️</button>
+                <button class="action-icon-btn delete" onclick="deleteInventoryItem(${item.id})" title="Excluir">🗑️</button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function openNewInventoryModal() {
+      document.getElementById('modalInvTitle').textContent = 'Novo Produto de Estoque';
+      document.getElementById('invId').value = '';
+      document.getElementById('invName').value = '';
+      document.getElementById('invCategory').value = 'Maquiagem';
+      document.getElementById('invQuantity').value = '1';
+      document.getElementById('invMinQuantity').value = '2';
+      document.getElementById('invCostPrice').value = '';
+      document.getElementById('invSupplier').value = '';
+      document.getElementById('modalInventory').classList.add('open');
+    }
+
+    function openEditInventoryModal(id) {
+      const item = rawInventory.find(i => i.id === id);
+      if (!item) return;
+
+      document.getElementById('modalInvTitle').textContent = 'Editar Produto';
+      document.getElementById('invId').value = item.id;
+      document.getElementById('invName').value = item.name;
+      document.getElementById('invCategory').value = item.category;
+      document.getElementById('invQuantity').value = item.quantity;
+      document.getElementById('invMinQuantity').value = item.min_quantity;
+      document.getElementById('invCostPrice').value = item.cost_price;
+      document.getElementById('invSupplier').value = item.supplier;
+      document.getElementById('modalInventory').classList.add('open');
+    }
+
+    async function handleSaveInventory(e) {
+      e.preventDefault();
+      const id = document.getElementById('invId').value;
+      const payload = {
+        name: document.getElementById('invName').value,
+        category: document.getElementById('invCategory').value,
+        quantity: parseInt(document.getElementById('invQuantity').value, 10) || 0,
+        min_quantity: parseInt(document.getElementById('invMinQuantity').value, 10) || 2,
+        cost_price: parseFloat(document.getElementById('invCostPrice').value) || 0,
+        supplier: document.getElementById('invSupplier').value
+      };
+
+      try {
+        if (id) {
+          await fetch(`/api/inventory/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+        } else {
+          await fetch('/api/inventory', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+        }
+        closeModal('modalInventory');
+        await loadInventory();
+      } catch (err) { alert('Erro ao salvar produto de estoque.'); }
+    }
+
+    async function adjustStock(id, delta) {
+      try {
+        await fetch(`/api/inventory/${id}/adjust`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ delta })
+        });
+        await loadInventory();
+      } catch (e) { alert('Erro ao ajustar quantidade.'); }
+    }
+
+    async function deleteInventoryItem(id) {
+      if (!confirm('Deseja excluir este item de estoque?')) return;
+      try {
+        await fetch(`/api/inventory/${id}`, { method: 'DELETE' });
+        await loadInventory();
+      } catch (e) { alert('Erro ao excluir item.'); }
+    }
+
+    // ==============================================
+    // GESTÃO DE HORÁRIOS & FOLGAS / DIAS
+    // ==============================================
+    async function loadAvailability() {
+      try {
+        const res = await fetch('/api/availability');
+        const json = await res.json();
+        if (!json.success) return;
+
+        availabilityData = json.data;
+
+        // Atualiza dias da semana ativos
+        const activeList = availabilityData.active_days || [1, 2, 3, 4, 5, 6];
+        document.querySelectorAll('.day-pill-toggle').forEach(btn => {
+          const dayNum = parseInt(btn.getAttribute('data-day'), 10);
+          if (activeList.includes(dayNum)) {
+            btn.classList.add('active');
+          } else {
+            btn.classList.remove('active');
+          }
+        });
+
+        // Renderiza chips de horários
+        renderTimesManager(availabilityData.custom_times || []);
+
+        // Renderiza dias bloqueados
+        renderBlockedDatesTable(availabilityData.blocked_dates || []);
+      } catch (e) { console.error('Erro ao carregar disponibilidade:', e); }
+    }
+
+    function renderTimesManager(times) {
+      const container = document.getElementById('timesManagerGrid');
+      if (!times || times.length === 0) {
+        container.innerHTML = '<span style="font-size: 12px; color: var(--text-muted);">Nenhum horário cadastrado. Adicione acima.</span>';
+        return;
+      }
+
+      // Ordena horários
+      const sorted = [...times].sort();
+
+      container.innerHTML = sorted.map(t => `
+        <div class="time-badge-chip">
+          <span>🕒 ${t}</span>
+          <button onclick="removeTimeSlot('${t}')" title="Remover horário">✕</button>
+        </div>
+      `).join('');
+    }
+
+    async function addCustomTimeSlot() {
+      const timeVal = document.getElementById('newTimeInput').value;
+      if (!timeVal) return;
+
+      if (!availabilityData.custom_times) availabilityData.custom_times = [];
+      if (availabilityData.custom_times.includes(timeVal)) {
+        alert('Este horário já está cadastrado.');
+        return;
+      }
+
+      availabilityData.custom_times.push(timeVal);
+
+      try {
+        await fetch('/api/availability', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(availabilityData)
+        });
+        renderTimesManager(availabilityData.custom_times);
+      } catch (e) { alert('Erro ao adicionar horário.'); }
+    }
+
+    async function removeTimeSlot(timeVal) {
+      availabilityData.custom_times = (availabilityData.custom_times || []).filter(t => t !== timeVal);
+      try {
+        await fetch('/api/availability', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(availabilityData)
+        });
+        renderTimesManager(availabilityData.custom_times);
+      } catch (e) { alert('Erro ao remover horário.'); }
+    }
+
+    async function toggleActiveDay(dayNum, btnEl) {
+      if (!availabilityData.active_days) availabilityData.active_days = [];
+
+      const idx = availabilityData.active_days.indexOf(dayNum);
+      if (idx >= 0) {
+        availabilityData.active_days.splice(idx, 1);
+        if (btnEl) btnEl.classList.remove('active');
+      } else {
+        availabilityData.active_days.push(dayNum);
+        if (btnEl) btnEl.classList.add('active');
+      }
+
+      try {
+        await fetch('/api/availability', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(availabilityData)
+        });
+        await loadAvailability();
+      } catch (e) {
+        console.error('Erro ao atualizar dias de atendimento:', e);
+        alert('Erro ao atualizar dias de atendimento.');
+      }
+    }
+
+    function renderBlockedDatesTable(blockedList) {
+      const tbody = document.getElementById('blockedDatesTableBody');
+      if (!blockedList || blockedList.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="3" style="text-align: center; color: var(--text-muted); padding: 20px;">Nenhum dia bloqueado.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = blockedList.map(b => `
+        <tr>
+          <td><strong>${b.date}</strong></td>
+          <td>${b.reason || 'Folga'}</td>
+          <td style="text-align: right;">
+            <button class="action-icon-btn delete" onclick="deleteBlockedDate('${b.id || b.date}')" title="Desbloquear dia">✕</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    async function submitBlockDate() {
+      const date = document.getElementById('blockDateInput').value;
+      const reason = document.getElementById('blockReasonInput').value || 'Folga';
+      if (!date) {
+        alert('Selecione a data a ser bloqueada.');
+        return;
+      }
+
+      try {
+        await fetch('/api/availability/blocked-dates', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ date, reason })
+        });
+        document.getElementById('blockDateInput').value = '';
+        document.getElementById('blockReasonInput').value = '';
+        await loadAvailability();
+      } catch (e) { alert('Erro ao bloquear data.'); }
+    }
+
+    async function deleteBlockedDate(idOrDate) {
+      try {
+        await fetch(`/api/availability/blocked-dates/${idOrDate}`, { method: 'DELETE' });
+        await loadAvailability();
+      } catch (e) { alert('Erro ao desbloquear data.'); }
+    }
+
+    // ==============================================
+    // CATÁLOGO DE SERVIÇOS
+    // ==============================================
+    async function loadServices() {
+      try {
+        const res = await fetch('/api/services');
+        const json = await res.json();
+        if (json.success) {
+          const tbody = document.getElementById('servicesTableBody');
+          tbody.innerHTML = json.data.map(s => `
+            <tr>
+              <td><strong>${s.name}</strong></td>
+              <td>${s.duration}</td>
+              <td style="color: var(--champagne-dark); font-weight: 700;">${formatCurrency(s.price)}</td>
+              <td style="font-size: 12px; color: var(--text-secondary);">${s.description || '-'}</td>
+              <td><span class="status-badge status-confirmado">Ativo</span></td>
+            </tr>
+          `).join('');
+        }
+      } catch (e) { console.error('Erro ao carregar serviços:', e); }
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.remove('open');
+    }
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+  <title>Geovanna Macedo — Maquiadora e Penteadista</title>
+  <meta name="description" content="Beleza que respeita o seu tempo e a sua história. Atendimentos exclusivos de maquiagem e penteados para noivas, formandas e produções sociais com Geovanna Macedo." />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg-dark: #120e0c;
+      --bg-card: rgba(30, 22, 19, 0.75);
+      --bg-glass: rgba(255, 255, 255, 0.05);
+      
+      /* Paleta Oficial */
+      --pearly-white: #F9F6F1;
+      --blush-pink: #E1C1B6;
+      --blush-glow: rgba(225, 193, 182, 0.32);
+      --blush-soft: rgba(225, 193, 182, 0.12);
+      --champagne-gold: #D6BD9F;
+      --champagne-light: #EAD8C3;
+      --champagne-dark: #B59B79;
+      --champagne-glow: rgba(214, 189, 159, 0.35);
+      
+      /* Cores de suporte */
+      --cream: #F9F6F1;
+      --cream-soft: #E3D8CC;
+      --cream-muted: rgba(249, 246, 241, 0.72);
+      --gold: #D6BD9F;
+      --gold-light: #EAD8C3;
+      --gold-dark: #B59B79;
+      --gold-glow: rgba(214, 189, 159, 0.3);
+      --border-glass: rgba(225, 193, 182, 0.14);
+      --border-gold: rgba(214, 189, 159, 0.38);
+      --border-blush: rgba(225, 193, 182, 0.35);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      min-height: 100vh;
+      min-height: 100dvh;
+      background-color: var(--bg-dark);
+      background: radial-gradient(circle at 75% 25%, #352620 0%, #1c1512 45%, #120e0c 100%);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      color: var(--pearly-white);
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    /* Ambient Lighting com Champagne Gold e Blush Pink */
+    .ambient-orb-1 {
+      position: fixed;
+      top: 5%;
+      right: 10%;
+      width: clamp(280px, 45vw, 520px);
+      height: clamp(280px, 45vw, 520px);
+      background: radial-gradient(circle, rgba(214, 189, 159, 0.2) 0%, transparent 70%);
+      filter: blur(50px);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .ambient-orb-2 {
+      position: fixed;
+      bottom: 5%;
+      left: 5%;
+      width: clamp(240px, 35vw, 420px);
+      height: clamp(240px, 35vw, 420px);
+      background: radial-gradient(circle, rgba(225, 193, 182, 0.18) 0%, transparent 70%);
+      filter: blur(60px);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* Container Principal Responsivo */
+    .hero-container {
+      position: relative;
+      z-index: 2;
+      min-height: 100vh;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      max-width: 1240px;
+      margin: 0 auto;
+      width: 100%;
+      padding: 24px 20px 28px 20px;
+      gap: 0;
+    }
+
+    /* Coluna de Conteúdo */
+    .content-area {
+      display: contents;
+    }
+
+    /* Pill Badge */
+    .top-badge {
+      order: 1;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--bg-glass);
+      border: 1px solid var(--border-gold);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      padding: 6px 16px;
+      border-radius: 9999px;
+      width: fit-content;
+      margin-bottom: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .top-badge-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--gold);
+      box-shadow: 0 0 10px var(--gold);
+    }
+
+    .top-badge-text {
+      font-size: clamp(10px, 2.5vw, 11px);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gold-light);
+      font-weight: 600;
+    }
+
+    /* Tipografia Principal com Interação na Foto no Mobile */
+    .title-first {
+      order: 2;
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-weight: 500;
+      font-size: clamp(44px, 12vw, 62px);
+      line-height: 0.9;
+      color: var(--cream);
+      letter-spacing: -0.01em;
+      text-align: center;
+      position: relative;
+      z-index: 3;
+      margin-bottom: -18px;
+      text-shadow: 0 4px 16px rgba(0, 0, 0, 0.7);
+    }
+
+    .title-last {
+      order: 4;
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 500;
+      font-size: clamp(40px, 11vw, 56px);
+      line-height: 0.95;
+      color: var(--cream);
+      letter-spacing: 0.02em;
+      text-align: center;
+      position: relative;
+      z-index: 3;
+      margin-top: -22px;
+      margin-bottom: 22px;
+      text-shadow: 0 4px 18px rgba(0, 0, 0, 0.85);
+    }
+
+    /* No mobile, o texto descritivo fica oculto conforme solicitado */
+    .hero-text {
+      display: none;
+      font-size: clamp(14px, 3.5vw, 16px);
+      color: var(--cream-muted);
+      line-height: 1.75;
+      max-width: 480px;
+      margin-bottom: clamp(24px, 4vw, 36px);
+      font-weight: 300;
+    }
+
+    /* Coluna da Foto / Arco Editorial Responsivo */
+    .photo-area {
+      order: 3;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      width: 100%;
+      max-width: clamp(230px, 60vw, 290px);
+      margin: 0 auto;
+      z-index: 2;
+    }
+
+    .photo-halo {
+      position: absolute;
+      inset: -10px;
+      background: radial-gradient(circle, rgba(212, 175, 110, 0.22) 0%, transparent 68%);
+      filter: blur(28px);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Moldura em Arco Adaptativa */
+    .arch-frame {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      border-radius: clamp(120px, 32vw, 160px) clamp(120px, 32vw, 160px) 24px 24px;
+      overflow: hidden;
+      background: #251b15;
+      box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.85), 0 0 25px rgba(212, 175, 110, 0.15);
+      border: 1px solid rgba(212, 175, 110, 0.35);
+      aspect-ratio: 3.4 / 4.1;
+      transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.6s ease;
+    }
+
+    .arch-frame:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 35px 80px -15px rgba(0, 0, 0, 0.95), 0 0 30px var(--gold-glow);
+    }
+
+    .arch-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 18%;
+      display: block;
+      transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .arch-frame:hover .arch-img {
+      transform: scale(1.03);
+    }
+
+    .arch-gradient-mask {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(0,0,0,0) 60%, rgba(18, 14, 11, 0.85) 100%);
+      pointer-events: none;
+    }
+
+    /* Floating Pill Badge na Foto (Oculto no mobile pois o nome já interage diretamente) */
+    .photo-floating-pill {
+      display: none;
+      position: absolute;
+      bottom: clamp(14px, 3vw, 22px);
+      left: clamp(12px, 3vw, 20px);
+      right: clamp(12px, 3vw, 20px);
+      background: rgba(26, 19, 15, 0.88);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      padding: clamp(10px, 2vw, 12px) clamp(14px, 3vw, 20px);
+      border-radius: 9999px;
+      border: 1px solid rgba(212, 175, 110, 0.3);
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .photo-pill-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(17px, 3.5vw, 20px);
+      font-weight: 500;
+      color: var(--cream);
+      line-height: 1.1;
+    }
+
+    .photo-pill-sub {
+      font-size: clamp(9px, 2vw, 10px);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--gold-light);
+    }
+
+    .photo-pill-arrow {
+      width: clamp(28px, 5vw, 32px);
+      height: clamp(28px, 5vw, 32px);
+      border-radius: 50%;
+      background: var(--gold);
+      color: #1a120b;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 14px;
+      transition: transform 0.3s ease;
+      flex-shrink: 0;
+    }
+
+    .photo-pill-arrow:hover {
+      transform: scale(1.1);
+    }
+
+    /* Grupo de Botões Pílula Responsivo */
+    .btn-group {
+      order: 5;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+      width: 100%;
+      max-width: 400px;
+      justify-content: center;
+    }
+
+    .pill-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      text-decoration: none;
+      padding: clamp(13px, 3vw, 16px) clamp(22px, 4vw, 32px);
+      font-size: clamp(12px, 2.5vw, 13px);
+      letter-spacing: 0.08em;
+      font-weight: 600;
+      border-radius: 9999px;
+      cursor: pointer;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      min-height: 48px;
+      flex: 1 1 auto;
+      text-align: center;
+    }
+
+    @media (max-width: 480px) {
+      .pill-btn {
+        flex: 1 1 100%;
+      }
+    }
+
+    .pill-btn-primary {
+      background: linear-gradient(135deg, #F9F6F1 0%, #E1C1B6 45%, #D6BD9F 100%);
+      color: #1a120e;
+      border: none;
+      box-shadow: 0 10px 28px var(--champagne-glow), 0 0 15px var(--blush-glow);
+    }
+
+    .pill-btn-primary:hover {
+      transform: translateY(-2px) scale(1.02);
+      box-shadow: 0 14px 34px rgba(225, 193, 182, 0.45), 0 0 25px var(--champagne-glow);
+      background: linear-gradient(135deg, #FFFFFF 0%, #ECD8D1 45%, #E5D2B8 100%);
+    }
+
+    .pill-btn-secondary {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--pearly-white);
+      border: 1px solid var(--border-blush);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+
+    .pill-btn-secondary:hover {
+      background: rgba(225, 193, 182, 0.12);
+      border-color: var(--blush-pink);
+      transform: translateY(-2px) scale(1.02);
+      color: #fff;
+    }
+
+    /* Pílulas de Especialidades */
+    .specialty-chips {
+      order: 6;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: center;
+      max-width: 400px;
+    }
+
+    .chip {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 6px 14px;
+      border-radius: 9999px;
+      font-size: clamp(10px, 2.5vw, 11px);
+      letter-spacing: 0.06em;
+      color: var(--cream-soft);
+      backdrop-filter: blur(8px);
+      transition: all 0.3s ease;
+    }
+
+    .chip:hover {
+      border-color: var(--gold);
+      color: var(--gold-light);
+      background: rgba(212, 175, 110, 0.08);
+    }
+
+    /* Estilos para Telas Médias e Desktop (mantém layout editorial completo de 2 colunas) */
+    @media (min-width: 960px) {
+      .hero-container {
+        display: grid;
+        grid-template-columns: 1.15fr 0.85fr;
+        align-items: center;
+        gap: 56px;
+        padding: clamp(20px, 4vw, 48px) clamp(16px, 4vw, 48px);
+        text-align: left;
+      }
+
+      .content-area {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        width: 100%;
+        max-width: 600px;
+        margin: 0;
+      }
+
+      .top-badge {
+        order: unset;
+        margin-bottom: 20px;
+        align-self: flex-start;
+      }
+
+      .title-first {
+        order: unset;
+        text-align: left;
+        position: static;
+        z-index: auto;
+        font-size: clamp(46px, 9vw, 92px);
+        line-height: 0.94;
+        margin-bottom: 0;
+        text-shadow: none;
+      }
+
+      .title-last {
+        order: unset;
+        text-align: left;
+        position: static;
+        z-index: auto;
+        font-size: clamp(38px, 7.5vw, 82px);
+        line-height: 0.98;
+        margin-top: 0;
+        margin-bottom: clamp(16px, 3vw, 24px);
+        text-shadow: none;
+      }
+
+      .hero-text {
+        display: block;
+      }
+
+      .btn-group {
+        order: unset;
+        max-width: 100%;
+        justify-content: flex-start;
+        margin-bottom: clamp(24px, 4vw, 38px);
+      }
+
+      .specialty-chips {
+        order: unset;
+        justify-content: flex-start;
+        max-width: 100%;
+      }
+
+      .photo-area {
+        order: unset;
+        max-width: 100%;
+      }
+
+      .arch-frame {
+        max-width: clamp(280px, 70vw, 420px);
+        border-radius: clamp(160px, 40vw, 240px) clamp(160px, 40vw, 240px) 32px 32px;
+        aspect-ratio: 3.8 / 5;
+      }
+
+      .photo-floating-pill {
+        display: flex;
+      }
+    }
+
+    /* Animações Suaves */
+    .fade-up {
+      animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .delay-1 { animation-delay: 0.08s; }
+    .delay-2 { animation-delay: 0.16s; }
+    .delay-3 { animation-delay: 0.24s; }
+    .delay-4 { animation-delay: 0.32s; }
+    .delay-5 { animation-delay: 0.40s; }
+
+    /* Modal Sobre Mim Responsivo */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 8, 6, 0.88);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      opacity: 0;
+      transition: opacity 0.35s ease;
+    }
+
+    .modal-overlay.open {
+      display: flex;
+      opacity: 1;
+    }
+
+    .modal-card {
+      background: rgba(30, 22, 17, 0.96);
+      border: 1px solid var(--border-gold);
+      border-radius: clamp(24px, 5vw, 36px);
+      max-width: 500px;
+      width: 100%;
+      max-height: 90vh;
+      max-height: 90dvh;
+      overflow-y: auto;
+      padding: clamp(28px, 6vw, 40px) clamp(20px, 5vw, 36px);
+      position: relative;
+      box-shadow: 0 35px 80px -15px rgba(0, 0, 0, 0.95);
+      animation: modalSlide 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    @keyframes modalSlide {
+      from { transform: scale(0.95) translateY(16px); opacity: 0; }
+      to { transform: scale(1) translateY(0); opacity: 1; }
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border-glass);
+      color: var(--cream-soft);
+      font-size: 15px;
+      cursor: pointer;
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: all 0.2s ease;
+    }
+
+    .modal-close:hover {
+      background: rgba(255, 255, 255, 0.15);
+      color: #fff;
+    }
+
+    .modal-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(28px, 7vw, 38px);
+      font-weight: 500;
+      color: var(--gold-light);
+      margin-bottom: 14px;
+      line-height: 1.1;
+    }
+
+    .modal-body {
+      font-size: clamp(13px, 3.2vw, 15px);
+      color: var(--cream-soft);
+      line-height: 1.75;
+      margin-bottom: 24px;
+      font-weight: 300;
+    }
+
+    .modal-tags-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 28px;
+    }
+
+    @media (max-width: 360px) {
+      .modal-tags-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .modal-tag {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 8px 12px;
+      border-radius: 14px;
+      font-size: clamp(11px, 2.5vw, 12px);
+      color: var(--cream);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .modal-tag span {
+      color: var(--gold);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="ambient-orb-1"></div>
+  <div class="ambient-orb-2"></div>
+
+  <div class="hero-container">
+    <!-- Coluna de Informações / Editorial -->
+    <main class="content-area">
+      <div class="top-badge fade-up delay-1">
+        <div class="top-badge-dot"></div>
+        <span class="top-badge-text">Atendimento Exclusivo</span>
+      </div>
+
+      <h1 class="title-first fade-up delay-2">
+        Geovanna
+      </h1>
+      <div class="title-last fade-up delay-2">
+        Macedo
+      </div>
+
+      <p class="hero-text fade-up delay-3">
+        Beleza que respeita o seu tempo e a sua história. Produções sofisticadas, delicadas e duradouras para realçar a sua melhor versão.
+      </p>
+
+      <div class="btn-group fade-up delay-4">
+        <a href="agendamento.html" class="pill-btn pill-btn-primary" id="btnAgendar">
+          Agendar Horário
+        </a>
+        <button type="button" class="pill-btn pill-btn-secondary" id="btnSobre" onclick="openAboutModal()">
+          Quem Sou Eu
+        </button>
+      </div>
+
+      <div class="specialty-chips fade-up delay-5">
+        <div class="chip">✦ Noivas</div>
+        <div class="chip">✦ Formandas</div>
+        <div class="chip">✦ Maquiagem Social</div>
+        <div class="chip">✦ Penteados</div>
+      </div>
+    </main>
+
+    <!-- Coluna da Foto com Arco Orgânico Adaptativo -->
+    <aside class="photo-area fade-up delay-3">
+      <div class="photo-halo"></div>
+      <div class="arch-frame">
+        <picture>
+          <source srcset="img/geovana_clean.webp" type="image/webp" />
+          <img 
+            src="img/geovana_clean.jpg" 
+            alt="Geovanna Macedo — Maquiadora e Penteadista" 
+            class="arch-img"
+            loading="eager"
+          />
+        </picture>
+        <div class="arch-gradient-mask"></div>
+
+        <div class="photo-floating-pill">
+          <div>
+            <div class="photo-pill-title">Geovanna Macedo</div>
+            <div class="photo-pill-sub">Makeup & Hair Artist</div>
+          </div>
+          <a href="agendamento.html" class="photo-pill-arrow" title="Agendar horário">
+            →
+          </a>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <footer style="margin-top: auto; padding: 16px 0; text-align: center; z-index: 10; position: relative;">
+    <a href="admin.html" style="font-size: 11px; color: var(--cream-muted); text-decoration: none; opacity: 0.5; transition: all 0.3s ease; letter-spacing: 0.05em;" onmouseover="this.style.opacity='1'; this.style.color='var(--champagne-gold)';" onmouseout="this.style.opacity='0.5'; this.style.color='var(--cream-muted)';">
+      ✦ Painel de Gestão
+    </a>
+  </footer>
+
+  <!-- Modal Sobre Mim Responsivo -->
+  <div class="modal-overlay" id="modalAbout" onclick="handleBackdropClick(event)">
+    <div class="modal-card">
+      <button class="modal-close" onclick="closeAboutModal()" aria-label="Fechar modal">✕</button>
+      <div class="top-badge" style="margin-bottom: 12px;">
+        <div class="top-badge-dot"></div>
+        <span class="top-badge-text">Sobre a Artista</span>
+      </div>
+      <h2 class="modal-title">Geovanna Macedo</h2>
+      <p class="modal-body">
+        Com olhar apurado para a singularidade de cada beleza, Geovanna Macedo une técnicas de alta performance a um atendimento acolhedor. Especialista em noivas, formandas e produções sociais de altíssima durabilidade.
+      </p>
+
+      <div class="modal-tags-grid">
+        <div class="modal-tag"><span>✦</span> Produção Noivas</div>
+        <div class="modal-tag"><span>✦</span> Formandas Glam</div>
+        <div class="modal-tag"><span>✦</span> Maquiagem Social</div>
+        <div class="modal-tag"><span>✦</span> Penteados</div>
+      </div>
+
+      <a href="agendamento.html" class="pill-btn pill-btn-primary" style="width: 100%;">
+        Escolher Meu Horário
+      </a>
+    </div>
+  </div>
+
+  <script>
+    function openAboutModal() {
+      document.getElementById('modalAbout').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeAboutModal() {
+      document.getElementById('modalAbout').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    function handleBackdropClick(e) {
+      if (e.target.id === 'modalAbout') {
+        closeAboutModal();
+      }
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeAboutModal();
+      }
+    });
+  </script>
+</body>
+
+</html>

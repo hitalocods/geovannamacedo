@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+    <title>Agendamento — Geovanna Macedo</title>
+    <meta name="description"
+        content="Agende seu horário com Geovanna Macedo. Escolha o serviço, data e horário ideais." />
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet" />
+
+    <style>    :root {
+        /* Paleta Oficial Clean & Luxury */
+        --pearly-white: #F9F6F1;
+        --pure-white: #FFFFFF;
+        --card-bg: rgba(255, 255, 255, 0.92);
+        --card-inner: rgba(249, 246, 241, 0.85);
+        
+        --blush-pink: #E1C1B6;
+        --blush-light: #F7EDE8;
+        --blush-glow: rgba(225, 193, 182, 0.4);
+        --blush-soft: rgba(225, 193, 182, 0.18);
+        
+        --champagne-gold: #D6BD9F;
+        --champagne-light: #EAD8C3;
+        --champagne-dark: #A88661;
+        --champagne-glow: rgba(214, 189, 159, 0.4);
+        
+        /* Tipografia de Alto Padrão (Warm Espresso & Charcoal) */
+        --text-primary: #281F1B;
+        --text-secondary: #54443C;
+        --text-muted: #82726A;
+        --text-light: #AB9C94;
+        
+        --border-glass: rgba(214, 189, 159, 0.35);
+        --border-gold: rgba(214, 189, 159, 0.55);
+        --border-blush: rgba(225, 193, 182, 0.55);
+    }
+
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+        min-height: 100vh;
+        min-height: 100dvh;
+        background-color: var(--pearly-white);
+        background: radial-gradient(circle at 50% 10%, #FFFFFF 0%, #F9F6F1 50%, #ECE4D8 100%);
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        color: var(--text-primary);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: clamp(16px, 3vw, 32px) clamp(12px, 3vw, 20px);
+        position: relative;
+        overflow-x: hidden;
+    }
+
+    /* Ambient Lighting Clean com Blush & Champagne */
+    .ambient-glow {
+        position: fixed;
+        top: -60px;
+        width: clamp(320px, 65vw, 600px);
+        height: clamp(320px, 65vw, 600px);
+        background: radial-gradient(circle, rgba(225, 193, 182, 0.45) 0%, rgba(214, 189, 159, 0.25) 50%, transparent 70%);
+        filter: blur(80px);
+        pointer-events: none;
+        z-index: 1;
+    }
+
+    /* Cartão Principal Flutuante Clean & Sofisticado */
+    .booking-card {
+        position: relative;
+        z-index: 2;
+        max-width: 540px;
+        width: 100%;
+        background: var(--card-bg);
+        backdrop-filter: blur(30px);
+        -webkit-backdrop-filter: blur(30px);
+        padding: clamp(24px, 5vw, 42px) clamp(18px, 5vw, 36px);
+        border: 1px solid var(--border-gold);
+        box-shadow: 0 25px 60px -15px rgba(168, 134, 97, 0.18), 0 0 35px rgba(225, 193, 182, 0.15);
+        border-radius: clamp(24px, 6vw, 36px);
+        margin: auto 0;
+    }
+
+    /* Top Nav */
+    .top-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: clamp(18px, 4vw, 26px);
+    }
+
+    .pill-back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        color: var(--text-secondary);
+        text-decoration: none;
+        font-size: clamp(10px, 2.4vw, 11px);
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        background: #FFFFFF;
+        border: 1px solid var(--border-glass);
+        padding: 6px 14px;
+        border-radius: 9999px;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+    }
+
+    .pill-back-link:hover {
+        border-color: var(--champagne-dark);
+        color: var(--text-primary);
+        transform: translateX(-2px);
+    }
+
+    .brand-pill {
+        font-size: clamp(10px, 2.4vw, 11px);
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--champagne-dark);
+        font-weight: 700;
+    }
+
+    /* Barra de Progresso em Pílulas */
+    .steps-pill-bar {
+        display: flex;
+        gap: 6px;
+        margin-bottom: clamp(20px, 4vw, 28px);
+    }
+
+    .step-pill {
+        flex: 1;
+        height: 5px;
+        background: rgba(40, 31, 27, 0.08);
+        border-radius: 9999px;
+        transition: all 0.4s ease;
+    }
+
+    .step-pill.active {
+        background: linear-gradient(90deg, #E1C1B6, #D6BD9F);
+        box-shadow: 0 0 10px var(--blush-glow);
+    }
+
+    /* Meta da Etapa */
+    .step-meta {
+        margin-bottom: clamp(18px, 4vw, 24px);
+    }
+
+    .step-pill-badge {
+        display: inline-block;
+        font-size: clamp(10px, 2.4vw, 11px);
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--champagne-dark);
+        font-weight: 700;
+        margin-bottom: 4px;
+    }
+
+    .step-main-title {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: clamp(26px, 6vw, 34px);
+        font-weight: 600;
+        color: var(--text-primary);
+        line-height: 1.1;
+    }
+
+    /* Animações */
+    .fade-in {
+        animation: fadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Step 0: Cartões de Serviços Responsivos */
+    .service-card {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: clamp(14px, 3vw, 18px) clamp(14px, 3.5vw, 20px);
+        margin-bottom: 10px;
+        background: #FFFFFF;
+        border: 1px solid var(--border-glass);
+        border-radius: clamp(14px, 3vw, 18px);
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        gap: 10px;
+        box-shadow: 0 3px 12px rgba(168, 134, 97, 0.05);
+    }
+
+    .service-card:hover {
+        border-color: var(--champagne-gold);
+        background: #FAF7F4;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(214, 189, 159, 0.18);
+    }
+
+    .service-card.selected {
+        border-color: var(--champagne-dark);
+        background: linear-gradient(135deg, #FFFFFF 0%, #F5EBE6 100%);
+        box-shadow: 0 8px 24px rgba(225, 193, 182, 0.35);
+    }
+
+    .svc-title {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: clamp(18px, 4.5vw, 22px);
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 2px;
+        line-height: 1.15;
+    }
+
+    .service-card.selected .svc-title {
+        color: #1A120E;
+    }
+
+    .svc-desc {
+        font-size: clamp(11px, 2.5vw, 12px);
+        color: var(--text-muted);
+        font-weight: 500;
+    }
+
+    .radio-circle {
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        border: 1.5px solid rgba(130, 114, 106, 0.35);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: bold;
+        flex-shrink: 0;
+        transition: all 0.3s ease;
+        background: #FFFFFF;
+    }
+
+    .service-card.selected .radio-circle {
+        border-color: var(--champagne-dark);
+        background: linear-gradient(135deg, #E1C1B6, #D6BD9F);
+        color: #1a120e;
+    }
+
+    /* Step 1: Grade de Datas Adaptativa */
+    .dates-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: clamp(8px, 2vw, 12px);
+        margin-bottom: 8px;
+    }
+
+    .date-pill-card {
+        text-align: center;
+        padding: clamp(12px, 3vw, 18px) clamp(6px, 2vw, 12px);
+        background: #FFFFFF;
+        border: 1px solid var(--border-glass);
+        border-radius: clamp(16px, 4vw, 22px);
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        box-shadow: 0 3px 12px rgba(168, 134, 97, 0.05);
+    }
+
+    .date-pill-card:hover {
+        border-color: var(--champagne-gold);
+        background: #FAF7F4;
+        transform: translateY(-2px);
+    }
+
+    .date-pill-card.selected {
+        border-color: var(--champagne-dark);
+        background: linear-gradient(180deg, #FFFFFF 0%, #F5EAE5 100%);
+        box-shadow: 0 8px 24px rgba(225, 193, 182, 0.35);
+    }
+
+    .date-dow {
+        font-size: clamp(10px, 2.4vw, 11px);
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        margin-bottom: 4px;
+        font-weight: 600;
+    }
+
+    .date-num {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: clamp(22px, 5.5vw, 28px);
+        font-weight: 600;
+        color: var(--text-primary);
+        line-height: 1;
+        margin-bottom: 2px;
+    }
+
+    .date-pill-card.selected .date-num {
+        color: #8C6442;
+    }
+
+    .date-month {
+        font-size: clamp(10px, 2.4vw, 11px);
+        color: var(--text-muted);
+        font-weight: 500;
+    }
+
+    /* Step 2: Horários em Pílulas */
+    .times-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: clamp(8px, 2vw, 12px);
+    }
+
+    .time-pill {
+        padding: clamp(12px, 3vw, 15px);
+        background: #FFFFFF;
+        border: 1px solid var(--border-glass);
+        border-radius: 9999px;
+        font-family: 'Cormorant Garamond', serif;
+        font-size: clamp(20px, 4.5vw, 24px);
+        text-align: center;
+        color: var(--text-primary);
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        box-shadow: 0 3px 12px rgba(168, 134, 97, 0.05);
+    }
+
+    .time-pill:hover {
+        border-color: var(--champagne-gold);
+        background: #FAF7F4;
+        transform: translateY(-2px);
+    }
+
+    .time-pill.selected {
+        border-color: var(--champagne-dark);
+        background: linear-gradient(135deg, #E1C1B6, #D6BD9F);
+        color: #1a120e;
+        font-weight: 700;
+        box-shadow: 0 8px 24px rgba(214, 189, 159, 0.4);
+    }
+
+    /* Step 3: Campos Arredondados */
+    .input-box {
+        margin-bottom: 16px;
+    }
+
+    .input-label {
+        display: block;
+        font-size: clamp(10px, 2.4vw, 11px);
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--text-secondary);
+        margin-bottom: 6px;
+        font-weight: 700;
+    }
+
+    .rounded-input {
+        width: 100%;
+        background: #FFFFFF;
+        border: 1px solid var(--border-glass);
+        border-radius: 14px;
+        padding: 13px 16px;
+        font-size: 16px;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        color: var(--text-primary);
+        outline: none;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+    }
+
+    .rounded-input:focus {
+        border-color: var(--champagne-dark);
+        box-shadow: 0 0 15px var(--champagne-glow);
+    }
+
+    .summary-box {
+        background: #F7EEE8;
+        border: 1px solid var(--border-blush);
+        border-radius: 18px;
+        padding: clamp(14px, 3vw, 18px);
+        font-size: clamp(12px, 2.8vw, 13px);
+        color: var(--text-secondary);
+        line-height: 1.8;
+        margin-top: 20px;
+    }
+
+    .summary-box strong {
+        color: var(--text-primary);
+    }
+
+    /* Barra de Navegação Inferior */
+    .nav-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: clamp(24px, 5vw, 34px);
+        padding-top: 16px;
+        border-top: 1px solid var(--border-glass);
+        gap: 12px;
+    }
+
+    .btn-step-back {
+        background: none;
+        border: none;
+        color: var(--text-muted);
+        font-size: clamp(12px, 2.5vw, 13px);
+        letter-spacing: 0.06em;
+        cursor: pointer;
+        padding: 10px 14px;
+        border-radius: 9999px;
+        transition: all 0.2s ease;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        min-height: 44px;
+    }
+
+    .btn-step-back:hover:not(:disabled) {
+        color: var(--text-primary);
+        background: rgba(0, 0, 0, 0.04);
+    }
+
+    .btn-step-back:disabled {
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    .btn-step-next {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        background: rgba(0, 0, 0, 0.05);
+        border: 1px solid rgba(0, 0, 0, 0.08);
+        color: var(--text-light);
+        padding: clamp(12px, 2.5vw, 14px) clamp(20px, 4vw, 32px);
+        font-size: clamp(11px, 2.5vw, 12px);
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        font-weight: 600;
+        border-radius: 9999px;
+        cursor: default;
+        transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        min-height: 46px;
+    }
+
+    .btn-step-next.ready {
+        background: linear-gradient(135deg, #E1C1B6 0%, #D6BD9F 50%, #B59B79 100%);
+        border: none;
+        color: #1a120e;
+        font-weight: 700;
+        cursor: pointer;
+        box-shadow: 0 8px 24px rgba(214, 189, 159, 0.4);
+    }
+
+    .btn-step-next.ready:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 14px 32px rgba(225, 193, 182, 0.5);
+        background: linear-gradient(135deg, #ECD8D0 0%, #E0CAA6 50%, #C4A783 100%);
+    }
+
+    /* Tela de Sucesso */
+    .success-view {
+        text-align: center;
+        padding: 16px 0;
+    }
+
+    .success-check-bubble {
+        width: clamp(56px, 12vw, 68px);
+        height: clamp(56px, 12vw, 68px);
+        border-radius: 50%;
+        background: linear-gradient(135deg, #E1C1B6, #D6BD9F);
+        color: #1a120e;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: clamp(22px, 5vw, 28px);
+        font-weight: bold;
+        margin: 0 auto clamp(16px, 4vw, 24px);
+        box-shadow: 0 10px 25px var(--blush-glow);
+    }
+
+    .success-heading {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: clamp(28px, 6vw, 36px);
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 12px;
+    }
+
+    .success-body {
+        font-size: clamp(13px, 3vw, 14px);
+        color: var(--text-secondary);
+        line-height: 1.8;
+        margin-bottom: 24px;
+    }
+
+    .btn-whatsapp-pill {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        width: 100%;
+        background: linear-gradient(135deg, #28E06E 0%, #1EB956 100%);
+        color: #fff;
+        text-decoration: none;
+        padding: 15px 24px;
+        font-size: clamp(12px, 2.5vw, 13px);
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        border-radius: 9999px;
+        box-shadow: 0 10px 25px rgba(37, 211, 102, 0.3);
+        transition: all 0.35s ease;
+        cursor: pointer;
+        min-height: 48px;
+    }
+
+    .btn-whatsapp-pill:hover {
+        transform: translateY(-2px) scale(1.01);
+        box-shadow: 0 14px 32px rgba(37, 211, 102, 0.45);
+    }
+    </style>
+</head>
+
+<body>
+    <div class="ambient-glow"></div>
+
+    <main class="booking-card">
+        <header class="top-header">
+            <a href="index.html" class="pill-back-link">
+                ← Início
+            </a>
+            <div class="brand-pill">
+                Geovanna Macedo
+            </div>
+        </header>
+
+        <nav class="steps-pill-bar" id="stepBars" aria-label="Progresso do agendamento">
+            <div class="step-pill active"></div>
+            <div class="step-pill"></div>
+            <div class="step-pill"></div>
+            <div class="step-pill"></div>
+        </nav>
+
+        <div class="step-meta" id="stepHeader">
+            <span class="step-pill-badge" id="stepTag">Etapa 1 de 4</span>
+            <h1 class="step-main-title" id="stepTitle">Escolha o Serviço</h1>
+        </div>
+
+        <!-- Conteúdo da Etapa -->
+        <div id="stepContent" class="fade-in"></div>
+
+        <!-- Ações de Navegação -->
+        <footer class="nav-actions" id="navButtons">
+            <button type="button" class="btn-step-back" id="btnBack" onclick="goBack()" disabled>
+                ← Voltar
+            </button>
+            <button type="button" class="btn-step-next" id="btnNext" onclick="goNext()">
+                Continuar
+            </button>
+        </footer>
+    </main>
+
+    <script>
+        const WHATSAPP_PHONE = '5586981692975';
+
+        const SERVICES = [
+            { id: "social", label: "Maquiagem Social", dur: "1h", price: "R$ 160" },
+            { id: "noiva", label: "Noiva (Produção Completa)", dur: "2h30", price: "R$ 450" },
+            { id: "formanda", label: "Formanda Glam", dur: "2h", price: "R$ 220" },
+            { id: "penteado", label: "Penteado Exclusivo", dur: "1h", price: "R$ 140" },
+            { id: "combo", label: "Combo Make + Penteado", dur: "2h", price: "R$ 280" }
+        ];
+
+        let DATES = [];
+        let TIMES = ["08:30", "10:00", "11:30", "14:00", "15:30", "17:00", "18:30"];
+        let activeDaysOfWeek = [1, 2, 3, 4, 5, 6];
+        let blockedDatesList = [];
+
+        function generateDynamicDates() {
+            const dates = [];
+            const daysOfWeek = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+            const months = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+            const now = new Date();
+            let added = 0;
+            let dayOffset = 0;
+
+            while (added < 6 && dayOffset < 30) {
+                const d = new Date();
+                d.setDate(now.getDate() + dayOffset);
+                const dayNum = d.getDay();
+                const isoDateStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+
+                const isDayActive = activeDaysOfWeek.includes(dayNum);
+                const isDateBlocked = blockedDatesList.some(b => b.date === isoDateStr || b === isoDateStr);
+
+                if (isDayActive && !isDateBlocked) {
+                    const id = `d_${d.getFullYear()}_${d.getMonth() + 1}_${d.getDate()}`;
+                    dates.push({
+                        id: id,
+                        dow: daysOfWeek[dayNum],
+                        day: String(d.getDate()).padStart(2, '0'),
+                        month: months[d.getMonth()],
+                        rawDate: d,
+                        isoDate: isoDateStr
+                    });
+                    added++;
+                }
+                dayOffset++;
+            }
+            return dates;
+        }
+
+        async function initAvailability() {
+            try {
+                const res = await fetch('/api/availability');
+                const json = await res.json();
+                if (json.success && json.data) {
+                    if (json.data.active_days && Array.isArray(json.data.active_days)) {
+                        activeDaysOfWeek = json.data.active_days;
+                    }
+                    if (json.data.blocked_dates && Array.isArray(json.data.blocked_dates)) {
+                        blockedDatesList = json.data.blocked_dates;
+                    }
+                    if (json.data.custom_times && Array.isArray(json.data.custom_times) && json.data.custom_times.length > 0) {
+                        TIMES = json.data.custom_times.sort();
+                    }
+                }
+            } catch (e) {
+                console.warn('Usando horários padrão de contingência:', e);
+            }
+            DATES = generateDynamicDates();
+            render();
+        }
+
+        const STEP_NAMES = ["Serviço", "Data", "Horário", "Seus Dados"];
+
+        const state = {
+            step: 0,
+            service: null,
+            date: null,
+            time: null,
+            name: "",
+            phone: "",
+            done: false
+        };
+
+        function updateIndicator() {
+            const bars = document.querySelectorAll('.step-pill');
+            bars.forEach((bar, idx) => {
+                if (idx <= state.step) bar.classList.add('active');
+                else bar.classList.remove('active');
+            });
+
+            const stepTag = document.getElementById('stepTag');
+            const stepTitle = document.getElementById('stepTitle');
+            const btnBack = document.getElementById('btnBack');
+            const btnNext = document.getElementById('btnNext');
+
+            if (state.done) {
+                document.getElementById('stepHeader').style.display = 'none';
+                document.getElementById('stepBars').style.display = 'none';
+                document.getElementById('navButtons').style.display = 'none';
+                return;
+            }
+
+            stepTag.textContent = `Etapa ${state.step + 1} de 4 — ${STEP_NAMES[state.step]}`;
+
+            if (state.step === 0) stepTitle.textContent = "Escolha o Serviço";
+            else if (state.step === 1) stepTitle.textContent = "Escolha a Data";
+            else if (state.step === 2) stepTitle.textContent = "Escolha o Horário";
+            else if (state.step === 3) stepTitle.textContent = "Seus Dados";
+
+            btnBack.disabled = state.step === 0;
+
+            if (checkCanProceed()) {
+                btnNext.classList.add('ready');
+            } else {
+                btnNext.classList.remove('ready');
+            }
+
+            btnNext.textContent = state.step === 3 ? "Confirmar Agendamento" : "Continuar";
+        }
+
+        function checkCanProceed() {
+            if (state.step === 0) return Boolean(state.service);
+            if (state.step === 1) return Boolean(state.date);
+            if (state.step === 2) return Boolean(state.time);
+            if (state.step === 3) return state.name.trim().length >= 3 && state.phone.replace(/\D/g, '').length >= 10;
+            return false;
+        }
+
+        function selectService(id) {
+            state.service = id;
+            render();
+        }
+
+        function selectDate(id) {
+            state.date = id;
+            render();
+        }
+
+        function selectTime(t) {
+            state.time = t;
+            render();
+        }
+
+        function handleNameInput(e) {
+            state.name = e.target.value;
+            updateIndicator();
+        }
+
+        function handlePhoneInput(e) {
+            let v = e.target.value.replace(/\D/g, '');
+            if (v.length > 11) v = v.slice(0, 11);
+
+            if (v.length > 6) {
+                v = `(${v.slice(0, 2)}) ${v.slice(2, 3)} ${v.slice(3, 7)}-${v.slice(7)}`;
+            } else if (v.length > 2) {
+                v = `(${v.slice(0, 2)}) ${v.slice(2)}`;
+            }
+
+            state.phone = v;
+            e.target.value = v;
+            updateIndicator();
+        }
+
+        async function goNext() {
+            if (!checkCanProceed()) return;
+
+            if (state.step < 3) {
+                state.step++;
+                render();
+            } else {
+                const svc = getSelectedService();
+                const dt = getSelectedDate();
+                
+                // Formata data YYYY-MM-DD
+                let formattedDate = new Date().toISOString().split('T')[0];
+                if (dt && dt.rawDate) {
+                    const year = dt.rawDate.getFullYear();
+                    const month = String(dt.rawDate.getMonth() + 1).padStart(2, '0');
+                    const day = String(dt.rawDate.getDate()).padStart(2, '0');
+                    formattedDate = `${year}-${month}-${day}`;
+                }
+
+                const priceNum = svc ? parseFloat(svc.price.replace(/[^\d.,]/g, '').replace(',', '.')) || 0 : 0;
+
+                const btnNext = document.getElementById('btnNext');
+                if (btnNext) {
+                    btnNext.textContent = "Salvando...";
+                    btnNext.disabled = true;
+                }
+
+                try {
+                    await fetch('/api/appointments', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            client_name: state.name.trim(),
+                            client_phone: state.phone.trim(),
+                            service_id: state.service,
+                            service_name: svc ? svc.label : 'Atendimento',
+                            price: priceNum,
+                            appointment_date: formattedDate,
+                            appointment_time: state.time,
+                            status: 'pendente',
+                            payment_status: 'pendente'
+                        })
+                    });
+                } catch (e) {
+                    console.warn('Agendamento salvo offline/contingência:', e);
+                }
+
+                state.done = true;
+                render();
+                sendWhatsAppConfirmation();
+            }
+        }
+
+        function goBack() {
+            if (state.step > 0) {
+                state.step--;
+                render();
+            }
+        }
+
+        function getSelectedService() {
+            return SERVICES.find(s => s.id === state.service);
+        }
+
+        function getSelectedDate() {
+            return DATES.find(d => d.id === state.date);
+        }
+
+        function buildWhatsAppUrl() {
+            const svc = getSelectedService();
+            const dt = getSelectedDate();
+
+            const msg = `Olá, Geovanna! Gostaria de confirmar meu agendamento:\n\n` +
+                `✦ *Serviço:* ${svc ? svc.label : ''}\n` +
+                `✦ *Data:* ${dt ? `${dt.dow}, ${dt.day}/${dt.month}` : ''}\n` +
+                `✦ *Horário:* ${state.time}\n` +
+                `✦ *Nome:* ${state.name}\n` +
+                `✦ *WhatsApp:* ${state.phone}\n\n` +
+                `Aguardo a confirmação. Muito obrigada! ✨`;
+
+            const cleanPhone = WHATSAPP_PHONE.replace(/\D/g, '');
+            return `https://wa.me/${cleanPhone}?text=${encodeURIComponent(msg)}`;
+        }
+
+        function sendWhatsAppConfirmation() {
+            window.open(buildWhatsAppUrl(), '_blank');
+        }
+
+        function render() {
+            const container = document.getElementById('stepContent');
+            updateIndicator();
+
+            if (state.done) {
+                const svc = getSelectedService();
+                const dt = getSelectedDate();
+                const waUrl = buildWhatsAppUrl();
+
+                container.innerHTML = `
+          <div class="success-view fade-in">
+            <div class="success-check-bubble">✓</div>
+            <h2 class="success-heading">Solicitação Enviada!</h2>
+            <div class="success-body">
+              <strong>${svc ? svc.label : ''}</strong><br>
+              ${dt ? `${dt.dow}, ${dt.day} de ${dt.month}` : ''} às <strong>${state.time}</strong><br>
+              Cliente: <strong>${state.name}</strong>
+            </div>
+
+            <p style="font-size: 13px; color: var(--cream-soft); margin-bottom: 20px; line-height: 1.6;">
+              Caso sua conversa no WhatsApp não tenha aberto automaticamente, toque abaixo:
+            </p>
+
+            <a href="${waUrl}" target="_blank" class="btn-whatsapp-pill">
+              <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/>
+              </svg>
+              Confirmar no WhatsApp
+            </a>
+
+            <div style="margin-top: 22px;">
+              <a href="index.html" class="pill-back-link" style="justify-content: center;">
+                ← Voltar para o Início
+              </a>
+            </div>
+          </div>
+        `;
+                return;
+            }
+
+            // Step 0: Serviços
+            if (state.step === 0) {
+                container.innerHTML = `
+          <div class="fade-in">
+            ${SERVICES.map(s => `
+              <div 
+                class="service-card ${state.service === s.id ? 'selected' : ''}" 
+                onclick="selectService('${s.id}')"
+                role="button"
+                tabindex="0"
+              >
+                <div>
+                  <div class="svc-title">${s.label}</div>
+                  <div class="svc-desc">${s.dur} • ${s.price}</div>
+                </div>
+                <div class="radio-circle">
+                  ${state.service === s.id ? '✓' : ''}
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        `;
+            }
+
+            // Step 1: Datas
+            else if (state.step === 1) {
+                container.innerHTML = `
+          <div class="dates-grid fade-in">
+            ${DATES.map(d => `
+              <div 
+                class="date-pill-card ${state.date === d.id ? 'selected' : ''}" 
+                onclick="selectDate('${d.id}')"
+                role="button"
+                tabindex="0"
+              >
+                <div class="date-dow">${d.dow}</div>
+                <div class="date-num">${d.day}</div>
+                <div class="date-month">${d.month}</div>
+              </div>
+            `).join('')}
+          </div>
+        `;
+            }
+
+            // Step 2: Horários
+            else if (state.step === 2) {
+                container.innerHTML = `
+          <div class="times-grid fade-in">
+            ${TIMES.map(t => `
+              <div 
+                class="time-pill ${state.time === t ? 'selected' : ''}" 
+                onclick="selectTime('${t}')"
+                role="button"
+                tabindex="0"
+              >
+                ${t}
+              </div>
+            `).join('')}
+          </div>
+        `;
+            }
+
+            // Step 3: Dados & Resumo
+            else if (state.step === 3) {
+                const svc = getSelectedService();
+                const dt = getSelectedDate();
+
+                container.innerHTML = `
+          <div class="fade-in">
+            <div class="input-box">
+              <label class="input-label" for="clientName">Seu Nome Completo</label>
+              <input 
+                type="text" 
+                id="clientName" 
+                class="rounded-input" 
+                placeholder="Ex: Maria Silva" 
+                value="${state.name}"
+                oninput="handleNameInput(event)"
+                autofocus
+              />
+            </div>
+
+            <div class="input-box">
+              <label class="input-label" for="clientPhone">WhatsApp com DDD</label>
+              <input 
+                type="tel" 
+                id="clientPhone" 
+                class="rounded-input" 
+                placeholder="(86) 99999-9999" 
+                value="${state.phone}"
+                oninput="handlePhoneInput(event)"
+              />
+            </div>
+
+            <div class="summary-box">
+              <div>✦ Serviço: <strong>${svc ? svc.label : ''} (${svc ? svc.dur : ''})</strong></div>
+              <div>✦ Data: <strong>${dt ? `${dt.dow}, ${dt.day} de ${dt.month}` : ''}</strong></div>
+              <div>✦ Horário: <strong>${state.time || ''}</strong></div>
+            </div>
+          </div>
+        `;
+            }
+        }
+
+        initAvailability();
+    </script>
+</body>
+
+</html>
