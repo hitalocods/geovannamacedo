@@ -73,6 +73,13 @@
       }
     }
 
+    html, body {
+      width: 100%;
+      max-width: 100vw;
+      overflow-x: hidden !important;
+      position: relative;
+    }
+
     body {
       min-height: 100vh;
       background-color: var(--pearly-white);
@@ -81,8 +88,6 @@
       color: var(--text-primary);
       display: flex;
       flex-direction: column;
-      overflow-x: hidden;
-      position: relative;
     }
 
     /* Ambient Lighting Clean */
@@ -1596,7 +1601,7 @@
     }
 
     /* ======================================================== */
-    /* RESPONSIVIDADE PARA TABLET E MOBILE                      */
+    /* RESPONSIVIDADE PARA TABLET E MOBILE (SEM ROLAGEM BODY)   */
     /* ======================================================== */
     @media (max-width: 991px) {
       .nav-actions-desktop {
@@ -1612,14 +1617,17 @@
       }
 
       .admin-container {
-        padding: 14px 12px;
-        gap: 16px;
+        padding: 12px 10px;
+        gap: 14px;
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
       }
 
       /* Grid de KPIs no Tablet */
       .kpi-grid {
         grid-template-columns: repeat(3, 1fr);
-        gap: 12px;
+        gap: 10px;
       }
 
       .charts-grid {
@@ -1631,91 +1639,114 @@
       }
     }
 
-    @media (max-width: 640px) {
+    @media (max-width: 768px) {
+      /* Oculta as abas horizontais no mobile para concentrar tudo no Menu Hamburguer */
+      .tabs-bar {
+        display: none !important;
+      }
+
       .badge-pill {
         display: none;
       }
 
       .admin-nav {
-        padding: 10px 14px;
+        padding: 10px 12px;
+        width: 100%;
+        box-sizing: border-box;
       }
 
-      /* Grid de KPIs no Smartphone */
+      /* Grid de KPIs no Smartphone - Nenhum item sai da tela */
       .kpi-grid {
         grid-template-columns: repeat(2, 1fr);
-        gap: 10px;
+        gap: 8px;
+        width: 100%;
+        box-sizing: border-box;
       }
 
-      /* O 5º KPI (Ticket Médio) ocupa a linha inteira */
       .kpi-card:last-child {
         grid-column: span 2;
       }
 
       .kpi-card {
-        padding: 12px 10px;
-        border-radius: 16px;
+        padding: 10px 8px;
+        border-radius: 14px;
+        width: 100%;
+        box-sizing: border-box;
+        overflow: hidden;
       }
 
       .kpi-title {
         font-size: 10px;
-        margin-bottom: 4px;
+        margin-bottom: 2px;
       }
 
       .kpi-value {
-        font-size: clamp(16px, 4.5vw, 20px) !important;
+        font-size: clamp(14px, 4.2vw, 18px) !important;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
 
       .kpi-sub {
         font-size: 9px;
       }
 
-      /* Barra de Filtro de Período Stackada */
+      /* Barra de Filtro de Período Stackada Perfeitamente */
       .period-filter-bar {
         flex-direction: column;
         align-items: stretch;
-        gap: 10px;
-        padding: 12px;
-        border-radius: 18px;
+        gap: 8px;
+        padding: 10px;
+        border-radius: 16px;
+        width: 100%;
+        box-sizing: border-box;
+        overflow: hidden;
       }
 
       .period-pills {
+        display: flex;
         overflow-x: auto;
         flex-wrap: nowrap;
         scrollbar-width: none;
         width: 100%;
+        padding: 2px;
+        box-sizing: border-box;
       }
 
       .period-pill {
         white-space: nowrap;
-        padding: 6px 12px;
+        padding: 5px 10px;
         font-size: 11px;
       }
 
       .custom-date-box {
         display: grid;
         grid-template-columns: auto 1fr auto 1fr;
-        gap: 6px;
+        gap: 4px;
         align-items: center;
         width: 100%;
+        box-sizing: border-box;
       }
 
       .custom-date-box span {
-        font-size: 11px;
+        font-size: 10px;
         font-weight: 700;
       }
 
       .date-input-mini {
         width: 100%;
-        min-width: 0;
-        padding: 6px 6px;
+        min-width: 0 !important;
+        padding: 5px 4px;
         font-size: 11px;
+        box-sizing: border-box;
       }
 
       .btn-mini-apply {
         grid-column: 1 / -1;
         width: 100%;
         text-align: center;
-        margin-top: 4px;
+        margin-top: 2px;
+        box-sizing: border-box;
       }
 
       /* Grids em 1 Coluna em Telas Pequenas */
@@ -1723,32 +1754,68 @@
       .services-manage-grid,
       .appointments-cards-grid {
         grid-template-columns: 1fr !important;
-        gap: 12px;
+        gap: 10px;
+        width: 100%;
+        box-sizing: border-box;
       }
 
       .day-schedule-card,
       .service-manage-card,
       .appointment-card {
-        padding: 14px;
+        padding: 12px;
         border-radius: 16px;
+        width: 100%;
+        box-sizing: border-box;
       }
 
-      /* Ajustes de Painel & Filtros */
+      /* Ajustes de Painel & Filtros sem estouro */
+      .panel-card {
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+        padding: 14px 10px;
+        overflow: hidden;
+      }
+
+      .chart-card {
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+        overflow: hidden;
+        padding: 12px 10px;
+      }
+
+      .chart-box {
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+        height: 200px;
+        overflow: hidden;
+      }
+
+      .chart-box canvas {
+        max-width: 100% !important;
+      }
+
       .panel-header {
         flex-direction: column;
         align-items: stretch;
-        gap: 10px;
+        gap: 8px;
+        width: 100%;
+        box-sizing: border-box;
       }
 
       .filter-group {
         flex-direction: column;
         align-items: stretch;
         width: 100%;
+        box-sizing: border-box;
       }
 
       .search-input,
       .select-filter {
         width: 100%;
+        box-sizing: border-box;
       }
 
       .toast-container {
@@ -1905,9 +1972,6 @@
       <button type="button" class="btn-notification-bell" style="padding: 7px 10px;" onclick="toggleNotificationPermission()" title="Notificações">
         <span>🔔</span>
         <span class="bell-badge" id="bellBadgeMobile">0</span>
-      </button>
-      <button class="btn-nav-action" style="padding: 7px 12px; font-size: 11px;" onclick="openNewAppointmentModal()">
-        + Novo
       </button>
       <button class="hamburger-btn" id="hamburgerBtn" onclick="toggleMobileDrawer()" aria-label="Abrir menu">
         <span class="hamburger-bar"></span>
