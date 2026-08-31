@@ -273,12 +273,16 @@
         color: #1a120e;
     }
 
-    /* Step 1: Grade de Datas Adaptativa */
+    /* Step 1: Grade de Datas Adaptativa (Exibe Todos os Dias do Mês) */
     .dates-grid {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
         gap: clamp(8px, 2vw, 12px);
         margin-bottom: 8px;
+        max-height: 400px;
+        overflow-y: auto;
+        padding: 4px;
+        -webkit-overflow-scrolling: touch;
     }
 
     .date-pill-card {
@@ -663,10 +667,10 @@
             const daysOfWeek = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
             const months = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
             const now = new Date();
-            let added = 0;
             let dayOffset = 0;
 
-            while (added < 7 && dayOffset < 30) {
+            // Carrega todos os dias dos próximos 30 dias (mês completo)
+            while (dayOffset < 31) {
                 const d = new Date();
                 d.setDate(now.getDate() + dayOffset);
                 const dayNum = d.getDay();
@@ -686,7 +690,6 @@
                         dayNum: dayNum,
                         isoDate: isoDateStr
                     });
-                    added++;
                 }
                 dayOffset++;
             }
