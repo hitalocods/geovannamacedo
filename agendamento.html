@@ -750,8 +750,8 @@
             const now = new Date();
             let dayOffset = 0;
 
-            // Gera todos os dias dos próximos 60 dias (mês atual + próximo mês)
-            while (dayOffset < 60) {
+            // Gera todos os dias para os próximos 365 dias (1 ano inteiro de agendamentos)
+            while (dayOffset < 365) {
                 const d = new Date();
                 d.setDate(now.getDate() + dayOffset);
                 const dayNum = d.getDay();
