@@ -368,9 +368,9 @@
         box-shadow: 0 8px 24px rgba(214, 189, 159, 0.4);
     }
 
-    /* Step 3: Campos Arredondados */
+    /* Step 3: Campos Arredondados & Resumo Elegante */
     .input-box {
-        margin-bottom: 16px;
+        margin-bottom: 18px;
     }
 
     .input-label {
@@ -379,41 +379,87 @@
         letter-spacing: 0.12em;
         text-transform: uppercase;
         color: var(--text-secondary);
-        margin-bottom: 6px;
+        margin-bottom: 8px;
         font-weight: 700;
+    }
+
+    .input-with-icon {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+
+    .input-icon {
+        position: absolute;
+        left: 16px;
+        font-size: 16px;
+        pointer-events: none;
+        color: var(--champagne-dark);
     }
 
     .rounded-input {
         width: 100%;
         background: #FFFFFF;
-        border: 1px solid var(--border-glass);
-        border-radius: 14px;
-        padding: 13px 16px;
-        font-size: 16px;
+        border: 1px solid var(--border-gold);
+        border-radius: 16px;
+        padding: 14px 16px 14px 44px;
+        font-size: 15px;
         font-family: 'Plus Jakarta Sans', sans-serif;
         color: var(--text-primary);
         outline: none;
         transition: all 0.3s ease;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+        box-shadow: 0 3px 12px rgba(168, 134, 97, 0.05);
     }
 
     .rounded-input:focus {
         border-color: var(--champagne-dark);
-        box-shadow: 0 0 15px var(--champagne-glow);
+        box-shadow: 0 0 16px var(--champagne-glow);
+        background: #FFFFFF;
     }
 
     .summary-box {
-        background: #F7EEE8;
-        border: 1px solid var(--border-blush);
-        border-radius: 18px;
-        padding: clamp(14px, 3vw, 18px);
-        font-size: clamp(12px, 2.8vw, 13px);
-        color: var(--text-secondary);
-        line-height: 1.8;
-        margin-top: 20px;
+        background: #FAF7F4;
+        border: 1px solid var(--border-gold);
+        border-radius: 20px;
+        padding: 16px 18px;
+        margin-bottom: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        box-shadow: 0 4px 16px rgba(168, 134, 97, 0.06);
     }
 
-    .summary-box strong {
+    .summary-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .summary-icon-bubble {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #F7EDE8, #EAD8C3);
+        border: 1px solid var(--border-gold);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 15px;
+        flex-shrink: 0;
+    }
+
+    .summary-label {
+        font-size: 10px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        font-weight: 700;
+        margin-bottom: 2px;
+    }
+
+    .summary-value {
+        font-size: 14px;
+        font-weight: 700;
         color: var(--text-primary);
     }
 
@@ -1002,46 +1048,63 @@
                 container.innerHTML = `
           <div class="fade-in">
             <div class="summary-box">
-              <div class="summary-row">
-                <span>Serviço:</span>
-                <span>${svc ? svc.label : ''}</span>
+              <div class="summary-item">
+                <div class="summary-icon-bubble">✦</div>
+                <div>
+                  <div class="summary-label">Serviço Escolhido</div>
+                  <div class="summary-value">${svc ? svc.label : ''} ${svc && svc.dur ? `(${svc.dur})` : ''}</div>
+                </div>
               </div>
-              <div class="summary-row">
-                <span>Valor:</span>
-                <span style="font-weight: 700; color: var(--champagne-dark);">${displayPrice}</span>
+
+              <div class="summary-item">
+                <div class="summary-icon-bubble">💎</div>
+                <div>
+                  <div class="summary-label">Valor Estimado</div>
+                  <div class="summary-value" style="color: var(--champagne-dark); font-weight: 800;">${displayPrice}</div>
+                </div>
               </div>
-              <div class="summary-row">
-                <span>Data & Horário:</span>
-                <span>${dt ? `${dt.dow}, ${dt.day}/${dt.month}` : ''} às ${state.time || ''}</span>
+
+              <div class="summary-item">
+                <div class="summary-icon-bubble">📅</div>
+                <div>
+                  <div class="summary-label">Data & Horário</div>
+                  <div class="summary-value">${dt ? `${dt.dow}, ${dt.day} de ${dt.month}` : ''} às ${state.time || ''}</div>
+                </div>
               </div>
             </div>
 
-            <div class="form-group">
-              <label class="form-label" for="clientName">Seu Nome Completo</label>
-              <input 
-                type="text" 
-                id="clientName" 
-                class="form-control" 
-                placeholder="Ex: Maria Silva" 
-                value="${state.name}"
-                oninput="handleNameInput(event)"
-                required
-                autocomplete="name"
-              />
+            <div class="input-box">
+              <label class="input-label" for="clientName">Seu Nome Completo</label>
+              <div class="input-with-icon">
+                <span class="input-icon">👤</span>
+                <input 
+                  type="text" 
+                  id="clientName" 
+                  class="rounded-input" 
+                  placeholder="Ex: Maria Silva" 
+                  value="${state.name}"
+                  oninput="handleNameInput(event)"
+                  required
+                  autocomplete="name"
+                />
+              </div>
             </div>
 
-            <div class="form-group">
-              <label class="form-label" for="clientPhone">Seu WhatsApp com DDD</label>
-              <input 
-                type="tel" 
-                id="clientPhone" 
-                class="form-control" 
-                placeholder="(86) 99999-9999" 
-                value="${state.phone}"
-                oninput="handlePhoneInput(event)"
-                required
-                autocomplete="tel"
-              />
+            <div class="input-box">
+              <label class="input-label" for="clientPhone">Seu WhatsApp com DDD</label>
+              <div class="input-with-icon">
+                <span class="input-icon">💬</span>
+                <input 
+                  type="tel" 
+                  id="clientPhone" 
+                  class="rounded-input" 
+                  placeholder="(86) 99999-9999" 
+                  value="${state.phone}"
+                  oninput="handlePhoneInput(event)"
+                  required
+                  autocomplete="tel"
+                />
+              </div>
             </div>
           </div>
         `;
