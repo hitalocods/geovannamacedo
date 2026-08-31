@@ -2141,27 +2141,11 @@
           </div>
         </div>
 
-        <div class="table-responsive">
-          <table>
-            <thead>
-              <tr>
-                <th>Data</th>
-                <th>Tipo</th>
-                <th>Categoria</th>
-                <th>Descrição</th>
-                <th>Método</th>
-                <th>Valor</th>
-                <th>Status</th>
-                <th style="text-align: right;">Ações</th>
-              </tr>
-            </thead>
-            <tbody id="financesTableBody">
-              <tr>
-                <td colspan="8" style="text-align: center; color: var(--text-muted); padding: 30px;">Carregando
-                  finanças...</td>
-              </tr>
-            </tbody>
-          </table>
+        <!-- Container de Cards do Financeiro -->
+        <div id="financesCardsContainer" class="appointments-cards-grid">
+          <div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 40px;">
+            Carregando lançamentos...
+          </div>
         </div>
       </div>
     </section>
@@ -2214,27 +2198,11 @@
           <button class="btn-nav-action" onclick="openNewInventoryModal()">+ Novo Produto</button>
         </div>
 
-        <div class="table-responsive">
-          <table>
-            <thead>
-              <tr>
-                <th>Produto</th>
-                <th>Categoria</th>
-                <th>Estoque Atual</th>
-                <th>Mínimo</th>
-                <th>Preço de Custo</th>
-                <th>Fornecedor</th>
-                <th>Última Reposição</th>
-                <th style="text-align: right;">Ações</th>
-              </tr>
-            </thead>
-            <tbody id="inventoryTableBody">
-              <tr>
-                <td colspan="8" style="text-align: center; color: var(--text-muted); padding: 30px;">Carregando
-                  estoque...</td>
-              </tr>
-            </tbody>
-          </table>
+        <!-- Container de Cards do Estoque -->
+        <div id="inventoryCardsContainer" class="appointments-cards-grid">
+          <div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 40px;">
+            Carregando produtos...
+          </div>
         </div>
       </div>
     </section>
@@ -3280,32 +3248,52 @@
     }
 
     function renderFinancesTable(list) {
-      const tbody = document.getElementById('financesTableBody');
+      const container = document.getElementById('financesCardsContainer');
+      if (!container) return;
+
       if (list.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="8" style="text-align: center; color: var(--text-muted); padding: 30px;">Nenhum lançamento financeiro registrado.</td></tr>`;
+        container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 40px;">Nenhum lançamento financeiro registrado.</div>`;
         return;
       }
 
-      tbody.innerHTML = list.map(t => `
-        <tr>
-          <td>${t.date}</td>
-          <td>
-            <span class="status-badge ${t.type === 'receita' ? 'status-confirmado' : 'status-cancelado'}">
-              ${t.type === 'receita' ? '▲ Receita' : '▼ Despesa'}
-            </span>
-          </td>
-          <td><strong>${t.category}</strong></td>
-          <td>${t.description}</td>
-          <td><span class="badge-pill" style="font-size: 10px;">${(t.payment_method || 'pix').toUpperCase()}</span></td>
-          <td style="color: ${t.type === 'receita' ? 'var(--green)' : 'var(--red)'}; font-weight: 700;">
-            ${t.type === 'receita' ? '+' : '-'} ${formatCurrency(t.amount)}
-          </td>
-          <td><span style="font-size: 11px; color: var(--green); font-weight: 600;">✓ Pago</span></td>
-          <td style="text-align: right;">
-            <button class="action-icon-btn delete" onclick="deleteTransaction(${t.id})" title="Excluir">🗑️</button>
-          </td>
-        </tr>
-      `).join('');
+      container.innerHTML = list.map(t => {
+        const isReceita = t.type === 'receita';
+        const amountColor = isReceita ? 'var(--green)' : 'var(--red)';
+        const prefix = isReceita ? '+' : '-';
+        const badgeClass = isReceita ? 'status-confirmado' : 'status-cancelado';
+        const typeLabel = isReceita ? '▲ Receita' : '▼ Despesa';
+
+        return `
+          <div class="appointment-card">
+            <div class="app-card-header">
+              <div>
+                <div class="app-card-client">${t.category || 'Geral'}</div>
+                <div style="font-size: 12px; color: var(--text-secondary); margin-top: 2px; font-weight: 600;">
+                  📅 ${t.date} • <span class="badge-pill" style="font-size: 10px;">${(t.payment_method || 'pix').toUpperCase()}</span>
+                </div>
+              </div>
+              <span class="status-badge ${badgeClass}">${typeLabel}</span>
+            </div>
+
+            <div class="app-card-body">
+              <div style="font-size: 13px; color: var(--text-primary); font-weight: 500;">
+                ${t.description}
+              </div>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 4px;">
+                <span style="font-size: 12px; color: var(--text-muted); font-weight: 600;">Valor:</span>
+                <span style="font-size: 18px; font-weight: 800; color: ${amountColor};">
+                  ${prefix} ${formatCurrency(t.amount)}
+                </span>
+              </div>
+            </div>
+
+            <div class="app-card-footer">
+              <span style="font-size: 11px; color: var(--green); font-weight: 700;">✓ Pago</span>
+              <button class="action-icon-btn delete" onclick="deleteTransaction(${t.id})" title="Excluir Lançamento">🗑️ Excluir</button>
+            </div>
+          </div>
+        `;
+      }).join('');
     }
 
     function openNewTransactionModal() {
@@ -3399,37 +3387,65 @@
     }
 
     function renderInventoryTable(list) {
-      const tbody = document.getElementById('inventoryTableBody');
+      const container = document.getElementById('inventoryCardsContainer');
+      if (!container) return;
+
       if (list.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="8" style="text-align: center; color: var(--text-muted); padding: 30px;">Nenhum produto cadastrado no estoque.</td></tr>`;
+        container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 40px;">Nenhum produto cadastrado no estoque.</div>`;
         return;
       }
 
-      tbody.innerHTML = list.map(item => {
+      container.innerHTML = list.map(item => {
         const isLow = (item.quantity || 0) <= (item.min_quantity || 2);
+        const badgeHtml = isLow
+          ? `<span class="status-badge status-cancelado">⚠️ Baixo (${item.quantity}/${item.min_quantity} un)</span>`
+          : `<span class="status-badge status-confirmado">✓ Ok (${item.quantity} un)</span>`;
+
         return `
-          <tr>
-            <td><strong>${item.name}</strong></td>
-            <td><span class="badge-pill" style="font-size: 10px;">${item.category}</span></td>
-            <td>
-              <div style="display: inline-flex; align-items: center; gap: 8px;">
-                <button class="action-icon-btn" style="width: 26px; height: 26px;" onclick="adjustStock(${item.id}, -1)">-</button>
-                <strong style="font-size: 14px; min-width: 20px; text-align: center; color: ${isLow ? 'var(--red)' : 'var(--text-primary)'};">${item.quantity}</strong>
-                <button class="action-icon-btn" style="width: 26px; height: 26px;" onclick="adjustStock(${item.id}, 1)">+</button>
-                <span class="${isLow ? 'stock-badge-low' : 'stock-badge-ok'}">${isLow ? 'Baixo' : 'Ok'}</span>
+          <div class="appointment-card">
+            <div class="app-card-header">
+              <div>
+                <div class="app-card-client">${item.name}</div>
+                <div style="font-size: 12px; color: var(--text-secondary); margin-top: 2px;">
+                  <span class="badge-pill" style="font-size: 10px;">${item.category}</span>
+                </div>
               </div>
-            </td>
-            <td>${item.min_quantity} un</td>
-            <td><strong>${formatCurrency(item.cost_price)}</strong></td>
-            <td>${item.supplier || '-'}</td>
-            <td>${item.last_restock || '-'}</td>
-            <td style="text-align: right;">
-              <div class="action-btn-group" style="justify-content: flex-end;">
-                <button class="action-icon-btn" onclick="openEditInventoryModal(${item.id})" title="Editar">✏️</button>
-                <button class="action-icon-btn delete" onclick="deleteInventoryItem(${item.id})" title="Excluir">🗑️</button>
+              ${badgeHtml}
+            </div>
+
+            <div class="app-card-body">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-size: 12px; color: var(--text-secondary); font-weight: 600;">Estoque Atual:</span>
+                <div style="display: inline-flex; align-items: center; gap: 8px;">
+                  <button class="action-icon-btn" style="width: 28px; height: 28px; font-weight: bold;" onclick="adjustStock(${item.id}, -1)">-</button>
+                  <strong style="font-size: 16px; min-width: 24px; text-align: center; color: ${isLow ? 'var(--red)' : 'var(--text-primary)'};">${item.quantity}</strong>
+                  <button class="action-icon-btn" style="width: 28px; height: 28px; font-weight: bold;" onclick="adjustStock(${item.id}, 1)">+</button>
+                </div>
               </div>
-            </td>
-          </tr>
+
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 4px; font-size: 12px;">
+                <span style="color: var(--text-muted);">Mínimo recomendado:</span>
+                <span style="font-weight: 600;">${item.min_quantity} un</span>
+              </div>
+
+              <div style="display: flex; justify-content: space-between; align-items: center; font-size: 12px;">
+                <span style="color: var(--text-muted);">Preço de Custo:</span>
+                <span style="font-weight: 800; color: var(--champagne-dark);">${formatCurrency(item.cost_price)}</span>
+              </div>
+
+              ${item.supplier ? `
+                <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: var(--text-muted);">
+                  <span>Fornecedor:</span>
+                  <span>${item.supplier}</span>
+                </div>
+              ` : ''}
+            </div>
+
+            <div class="app-card-footer">
+              <button class="btn-nav-outline" style="padding: 5px 12px; font-size: 11px;" onclick="openEditInventoryModal(${item.id})">✏️ Editar</button>
+              <button class="action-icon-btn delete" onclick="deleteInventoryItem(${item.id})" title="Excluir Produto">🗑️ Excluir</button>
+            </div>
+          </div>
         `;
       }).join('');
     }
