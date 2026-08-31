@@ -334,11 +334,62 @@ app.delete('/api/availability/blocked-dates/:id', async (req, res) => {
 // ----------------------------------------------------
 app.get('/api/services', async (req, res) => {
   try {
-    const services = await db.getServices();
-    res.json({ success: true, data: services });
+    const config = await db.getServicesSettings();
+    res.json({ success: true, data: config.services, show_prices: config.show_prices });
   } catch (err) {
     console.error('Erro ao buscar serviços:', err);
     res.status(500).json({ success: false, error: 'Erro ao buscar catálogo de serviços.' });
+  }
+});
+
+app.post('/api/services', async (req, res) => {
+  try {
+    const { name, duration, price, description, category } = req.body;
+    if (!name) {
+      return res.status(400).json({ success: false, error: 'Nome do serviço é obrigatório.' });
+    }
+    const created = await db.createService({ name, duration, price, description, category });
+    res.status(201).json({ success: true, message: 'Serviço criado com sucesso!', data: created });
+  } catch (err) {
+    console.error('Erro ao criar serviço:', err);
+    res.status(500).json({ success: false, error: 'Erro ao criar serviço.' });
+  }
+});
+
+app.put('/api/services/settings/toggle-prices', async (req, res) => {
+  try {
+    const { show_prices } = req.body;
+    const updated = await db.toggleShowPrices(show_prices);
+    res.json({ success: true, message: 'Exibição de preços atualizada!', show_prices: updated });
+  } catch (err) {
+    console.error('Erro ao alterar exibição de preços:', err);
+    res.status(500).json({ success: false, error: 'Erro ao alterar exibição de preços.' });
+  }
+});
+
+app.put('/api/services/:id', async (req, res) => {
+  try {
+    const updated = await db.updateService(req.params.id, req.body);
+    if (!updated) {
+      return res.status(404).json({ success: false, error: 'Serviço não encontrado.' });
+    }
+    res.json({ success: true, message: 'Serviço atualizado com sucesso!', data: updated });
+  } catch (err) {
+    console.error('Erro ao atualizar serviço:', err);
+    res.status(500).json({ success: false, error: 'Erro ao atualizar serviço.' });
+  }
+});
+
+app.delete('/api/services/:id', async (req, res) => {
+  try {
+    const removed = await db.deleteService(req.params.id);
+    if (!removed) {
+      return res.status(404).json({ success: false, error: 'Serviço não encontrado.' });
+    }
+    res.json({ success: true, message: 'Serviço removido com sucesso!', data: removed });
+  } catch (err) {
+    console.error('Erro ao excluir serviço:', err);
+    res.status(500).json({ success: false, error: 'Erro ao excluir serviço.' });
   }
 });
 

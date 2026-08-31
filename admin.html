@@ -1368,6 +1368,222 @@
       text-decoration: underline;
     }
 
+    /* Cards Layout de Agendamentos */
+    .appointments-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 16px;
+      margin-top: 10px;
+    }
+
+    .appointment-card {
+      background: #FFFFFF;
+      border: 1px solid var(--border-gold);
+      border-radius: 20px;
+      padding: 18px;
+      box-shadow: 0 4px 16px rgba(168, 134, 97, 0.08);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 14px;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .appointment-card:hover {
+      border-color: var(--champagne-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(168, 134, 97, 0.15);
+    }
+
+    .app-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .app-card-client {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 2px;
+    }
+
+    .app-card-phone {
+      font-size: 12px;
+      color: var(--text-secondary);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .app-card-phone:hover {
+      color: var(--champagne-dark);
+    }
+
+    .app-card-body {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding: 12px;
+      background: #FAF7F4;
+      border-radius: 14px;
+      border: 1px solid var(--border-glass);
+    }
+
+    .app-card-datetime {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .app-card-service {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+    }
+
+    .app-card-price {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--champagne-dark);
+    }
+
+    .app-card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      padding-top: 10px;
+      border-top: 1px dashed var(--border-glass);
+    }
+
+    /* Daily Schedule Grid (7 Caixinhas de Horários por Dia) */
+    .daily-schedule-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 16px;
+      margin-top: 10px;
+    }
+
+    .day-schedule-card {
+      background: #FFFFFF;
+      border: 1px solid var(--border-gold);
+      border-radius: 20px;
+      padding: 18px;
+      box-shadow: 0 3px 12px rgba(168, 134, 97, 0.05);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      transition: all 0.25s ease;
+    }
+
+    .day-schedule-card.inactive {
+      opacity: 0.7;
+      background: #FAF7F4;
+      border-color: var(--border-glass);
+    }
+
+    .day-schedule-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border-glass);
+    }
+
+    .day-schedule-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .day-toggle-btn {
+      padding: 6px 14px;
+      border-radius: 9999px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      border: 1px solid var(--border-gold);
+      background: #FAF7F4;
+      color: var(--text-secondary);
+      transition: all 0.2s ease;
+    }
+
+    .day-toggle-btn.active {
+      background: linear-gradient(135deg, #E1C1B6, #D6BD9F);
+      color: #1A120E;
+      border-color: var(--champagne-dark);
+      box-shadow: 0 2px 8px rgba(214, 189, 159, 0.35);
+    }
+
+    .day-add-time-box {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    /* Grid de Gerenciamento de Serviços */
+    .services-manage-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 16px;
+      margin-top: 10px;
+    }
+
+    .service-manage-card {
+      background: #FFFFFF;
+      border: 1px solid var(--border-gold);
+      border-radius: 20px;
+      padding: 18px;
+      box-shadow: 0 4px 14px rgba(168, 134, 97, 0.06);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 12px;
+      transition: all 0.3s ease;
+    }
+
+    .service-manage-card:hover {
+      border-color: var(--champagne-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(168, 134, 97, 0.12);
+    }
+
+    .btn-toggle-prices {
+      background: #FFFFFF;
+      border: 1px solid var(--border-gold);
+      color: var(--text-primary);
+      padding: 8px 16px;
+      border-radius: 9999px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.25s ease;
+      box-shadow: 0 2px 8px rgba(168, 134, 97, 0.05);
+    }
+
+    .btn-toggle-prices.active {
+      background: linear-gradient(135deg, #E1C1B6 0%, #D6BD9F 100%);
+      color: #1A120E;
+      border-color: var(--champagne-dark);
+      box-shadow: 0 4px 14px rgba(214, 189, 159, 0.35);
+    }
+
     /* Views visibility */
     .view-section {
       display: none;
@@ -1436,8 +1652,8 @@
       }
 
       .kpi-card {
-        padding: 14px 12px;
-        border-radius: 18px;
+        padding: 12px 10px;
+        border-radius: 16px;
       }
 
       .kpi-title {
@@ -1446,18 +1662,18 @@
       }
 
       .kpi-value {
-        font-size: 24px;
+        font-size: clamp(16px, 4.5vw, 20px) !important;
       }
 
       .kpi-sub {
-        font-size: 10px;
+        font-size: 9px;
       }
 
       /* Barra de Filtro de Período Stackada */
       .period-filter-bar {
         flex-direction: column;
         align-items: stretch;
-        gap: 12px;
+        gap: 10px;
         padding: 12px;
         border-radius: 18px;
       }
@@ -1466,6 +1682,7 @@
         overflow-x: auto;
         flex-wrap: nowrap;
         scrollbar-width: none;
+        width: 100%;
       }
 
       .period-pill {
@@ -1479,23 +1696,41 @@
         grid-template-columns: auto 1fr auto 1fr;
         gap: 6px;
         align-items: center;
+        width: 100%;
       }
 
       .custom-date-box span {
         font-size: 11px;
+        font-weight: 700;
       }
 
       .date-input-mini {
         width: 100%;
-        padding: 6px 8px;
+        min-width: 0;
+        padding: 6px 6px;
         font-size: 11px;
       }
 
       .btn-mini-apply {
-        grid-column: span 4;
+        grid-column: 1 / -1;
         width: 100%;
         text-align: center;
         margin-top: 4px;
+      }
+
+      /* Grids em 1 Coluna em Telas Pequenas */
+      .daily-schedule-grid,
+      .services-manage-grid,
+      .appointments-cards-grid {
+        grid-template-columns: 1fr !important;
+        gap: 12px;
+      }
+
+      .day-schedule-card,
+      .service-manage-card,
+      .appointment-card {
+        padding: 14px;
+        border-radius: 16px;
       }
 
       /* Ajustes de Painel & Filtros */
@@ -1793,12 +2028,15 @@
     </section>
 
     <!-- ============================================== -->
-    <!-- 2. ABA: GESTÃO DE AGENDAMENTOS (CRUD)          -->
+    <!-- 2. ABA: GESTÃO DE AGENDAMENTOS (EM CARDS)      -->
     <!-- ============================================== -->
     <section id="viewAppointments" class="view-section">
       <div class="panel-card">
         <div class="panel-header">
-          <h2 class="panel-title">Agendamentos</h2>
+          <div>
+            <h2 class="panel-title">Agendamentos</h2>
+            <p style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">Visualização moderna em cards dos agendamentos realizados.</p>
+          </div>
           <div class="filter-group">
             <input type="text" id="appSearchInput" class="search-input" placeholder="Buscar cliente, serviço..."
               oninput="filterAppointments()" />
@@ -1813,27 +2051,11 @@
           </div>
         </div>
 
-        <div class="table-responsive">
-          <table>
-            <thead>
-              <tr>
-                <th>Data / Hora</th>
-                <th>Cliente</th>
-                <th>WhatsApp</th>
-                <th>Serviço</th>
-                <th>Valor</th>
-                <th>Status</th>
-                <th>Pagamento</th>
-                <th style="text-align: right;">Ações</th>
-              </tr>
-            </thead>
-            <tbody id="appointmentsTableBody">
-              <tr>
-                <td colspan="8" style="text-align: center; color: var(--text-muted); padding: 30px;">Carregando
-                  agendamentos...</td>
-              </tr>
-            </tbody>
-          </table>
+        <!-- Container de Cards de Agendamentos -->
+        <div id="appointmentsCardsContainer" class="appointments-cards-grid">
+          <div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 40px;">
+            Carregando agendamentos...
+          </div>
         </div>
       </div>
     </section>
@@ -1954,56 +2176,47 @@
     </section>
 
     <!-- ============================================== -->
-    <!-- 5. ABA: HORÁRIOS & BLOQUEIO DE DIAS / FOLGAS   -->
+    <!-- 5. ABA: HORÁRIOS POR DIA DA SEMANA & FOLGAS    -->
     <!-- ============================================== -->
     <section id="viewAvailability" class="view-section">
-      <!-- Dias da Semana de Atendimento -->
-      <div class="panel-card">
-        <div class="panel-header">
-          <h2 class="panel-title">Dias de Atendimento na Semana</h2>
-          <span class="badge-pill">Disponibilidade Geral</span>
-        </div>
-        <p style="font-size: 13px; color: var(--text-muted);">
-          Clique nos dias da semana para ativar ou desativar o atendimento (dias dourados estão liberados para
-          agendamento):
-        </p>
-        <div class="days-toggle-grid" id="daysToggleGrid">
-          <button class="day-pill-toggle" data-day="0" onclick="toggleActiveDay(0, this)">Domingo</button>
-          <button class="day-pill-toggle active" data-day="1" onclick="toggleActiveDay(1, this)">Segunda</button>
-          <button class="day-pill-toggle active" data-day="2" onclick="toggleActiveDay(2, this)">Terça</button>
-          <button class="day-pill-toggle active" data-day="3" onclick="toggleActiveDay(3, this)">Quarta</button>
-          <button class="day-pill-toggle active" data-day="4" onclick="toggleActiveDay(4, this)">Quinta</button>
-          <button class="day-pill-toggle active" data-day="5" onclick="toggleActiveDay(5, this)">Sexta</button>
-          <button class="day-pill-toggle active" data-day="6" onclick="toggleActiveDay(6, this)">Sábado</button>
+      <!-- Card Informativo de Sábados e Domingos via WhatsApp -->
+      <div class="panel-card" style="border-left: 4px solid var(--champagne-dark); background: #FAF7F4;">
+        <div style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap;">
+          <div style="width: 42px; height: 42px; border-radius: 50%; background: linear-gradient(135deg, #28E06E, #1EB956); color: white; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; box-shadow: 0 4px 12px rgba(37,211,102,0.3);">
+            📲
+          </div>
+          <div style="flex: 1; min-width: 240px;">
+            <strong style="font-size: 14px; color: var(--text-primary);">Agendamento de Sábados e Domingos (WhatsApp Direto)</strong>
+            <p style="font-size: 12px; color: var(--text-secondary); margin-top: 2px; line-height: 1.4;">
+              Nos <strong>Sábados e Domingos</strong>, os clientes encontram o botão de <strong>"Verificar disponibilidade no WhatsApp"</strong> ao agendar no site. A solicitação vai direto para o seu WhatsApp com o serviço e a data desejada!
+            </p>
+          </div>
         </div>
       </div>
 
-      <!-- Gerenciador de Horários (1 a 1) -->
+      <!-- Caixinhas de Horários por Dia da Semana -->
       <div class="panel-card">
         <div class="panel-header">
-          <h2 class="panel-title">Horários de Atendimento</h2>
-          <div style="display: flex; gap: 8px; align-items: center;">
-            <input type="time" id="newTimeInput" class="form-control" style="padding: 6px 12px; width: 120px;"
-              value="09:00" />
-            <button class="btn-nav-action" onclick="addCustomTimeSlot()">+ Adicionar Horário</button>
+          <div>
+            <h2 class="panel-title">Caixinhas de Horários por Dia da Semana</h2>
+            <p style="font-size: 13px; color: var(--text-muted); margin-top: 2px;">
+              Cada dia possui sua caixinha própria de horários. Ative ou desative o dia e adicione ou remova horários individualmente:
+            </p>
           </div>
         </div>
-        <p style="font-size: 13px; color: var(--text-muted);">
-          Estes são os horários que aparecerão no formulário de agendamento do cliente. Adicione ou remova
-          individualmente:
-        </p>
-        <div class="times-manager-grid" id="timesManagerGrid">
-          <!-- Chips de horários carregados dinamicamente -->
+
+        <div class="daily-schedule-grid" id="dailyScheduleGrid">
+          <!-- 7 Caixinhas de Horários geradas dinamicamente via JS -->
         </div>
       </div>
 
       <!-- Bloqueio de Dias Específicos / Folgas / Férias -->
       <div class="panel-card">
         <div class="panel-header">
-          <h2 class="panel-title">Bloquear Dias de Folga / Férias</h2>
+          <h2 class="panel-title">Bloquear Dias Específicos (Folga / Férias)</h2>
           <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
             <input type="date" id="blockDateInput" class="form-control" style="padding: 6px 12px;" />
-            <input type="text" id="blockReasonInput" class="form-control" placeholder="Motivo (ex: Férias, Folga)"
+            <input type="text" id="blockReasonInput" class="form-control" placeholder="Motivo (ex: Férias, Curso)"
               style="padding: 6px 12px; width: 180px;" />
             <button class="btn-nav-action" onclick="submitBlockDate()">+ Bloquear Dia</button>
           </div>
@@ -2029,33 +2242,28 @@
     </section>
 
     <!-- ============================================== -->
-    <!-- 6. ABA: CATÁLOGO DE SERVIÇOS                   -->
+    <!-- 6. ABA: CATÁLOGO DE SERVIÇOS & CONFIGURAÇÃO    -->
     <!-- ============================================== -->
     <section id="viewServices" class="view-section">
       <div class="panel-card">
-        <div class="panel-header">
-          <h2 class="panel-title">Catálogo de Serviços</h2>
-          <span class="badge-pill">Atendimentos Ativos</span>
+        <div class="panel-header" style="flex-wrap: wrap; gap: 12px;">
+          <div>
+            <h2 class="panel-title">Catálogo de Serviços</h2>
+            <p style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">Cadastre novos serviços, edite preços, durações e escolha se os preços aparecem no site.</p>
+          </div>
+          <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+            <button id="btnToggleShowPrices" class="btn-toggle-prices active" onclick="togglePricesVisibility()">
+              <span id="togglePricesIcon">👁️</span>
+              <span id="togglePricesText">Preços no Site: Visíveis (R$)</span>
+            </button>
+            <button class="btn-nav-action" onclick="openNewServiceModal()">+ Novo Serviço</button>
+          </div>
         </div>
 
-        <div class="table-responsive">
-          <table>
-            <thead>
-              <tr>
-                <th>Nome do Serviço</th>
-                <th>Duração</th>
-                <th>Preço</th>
-                <th>Descrição</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody id="servicesTableBody">
-              <tr>
-                <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 30px;">Carregando
-                  serviços...</td>
-              </tr>
-            </tbody>
-          </table>
+        <div class="services-manage-grid" id="servicesContainer">
+          <div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 30px;">
+            Carregando catálogo de serviços...
+          </div>
         </div>
       </div>
     </section>
@@ -2251,6 +2459,46 @@
         <div class="modal-footer">
           <button type="button" class="btn-nav-outline" onclick="closeModal('modalInventory')">Cancelar</button>
           <button type="submit" class="btn-submit">Salvar Produto</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Serviço -->
+  <div class="modal-backdrop" id="modalService">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title" id="modalServiceTitle">Novo Serviço</h3>
+        <button class="modal-close" onclick="closeModal('modalService')">✕</button>
+      </div>
+
+      <form id="formService" onsubmit="handleSaveService(event)">
+        <input type="hidden" id="svcId" />
+
+        <div class="form-group">
+          <label class="form-label" for="formSvcName">Nome do Serviço</label>
+          <input type="text" id="formSvcName" class="form-control" required placeholder="Ex: Maquiagem Social" />
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+          <div class="form-group">
+            <label class="form-label" for="formSvcDuration">Duração Estimada</label>
+            <input type="text" id="formSvcDuration" class="form-control" required placeholder="Ex: 1h, 2h30" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="formSvcPrice">Preço (R$)</label>
+            <input type="number" step="0.01" id="formSvcPrice" class="form-control" required placeholder="160.00" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="formSvcDescription">Descrição do Atendimento</label>
+          <textarea id="formSvcDescription" class="form-control" rows="3" placeholder="Ex: Produção sofisticada e duradoura para eventos sociais..."></textarea>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-nav-outline" onclick="closeModal('modalService')">Cancelar</button>
+          <button type="submit" class="btn-submit">Salvar Serviço</button>
         </div>
       </form>
     </div>
@@ -2755,7 +3003,7 @@
     }
 
     // ==============================================
-    // CRUD: AGENDAMENTOS
+    // CRUD: AGENDAMENTOS (EXIBIÇÃO EM CARDS)
     // ==============================================
     async function loadAppointments() {
       try {
@@ -2763,7 +3011,7 @@
         const json = await res.json();
         if (json.success) {
           rawAppointments = json.data;
-          renderAppointmentsTable(rawAppointments);
+          renderAppointmentsCards(rawAppointments);
         }
       } catch (e) { console.error('Erro ao carregar agendamentos:', e); }
     }
@@ -2781,47 +3029,66 @@
         return matchStatus && matchSearch;
       });
 
-      renderAppointmentsTable(filtered);
+      renderAppointmentsCards(filtered);
     }
 
-    function renderAppointmentsTable(list) {
-      const tbody = document.getElementById('appointmentsTableBody');
+    function renderAppointmentsCards(list) {
+      const container = document.getElementById('appointmentsCardsContainer');
+      if (!container) return;
+
       if (list.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="8" style="text-align: center; color: var(--text-muted); padding: 30px;">Nenhum agendamento encontrado.</td></tr>`;
+        container.innerHTML = `
+          <div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 40px; background: #FFFFFF; border-radius: 20px; border: 1px solid var(--border-gold);">
+            Nenhum agendamento encontrado.
+          </div>`;
         return;
       }
 
-      tbody.innerHTML = list.map(a => {
+      container.innerHTML = list.map(a => {
         const cleanPhone = (a.client_phone || '').replace(/\D/g, '');
         const waNumber = cleanPhone.startsWith('55') ? cleanPhone : `55${cleanPhone}`;
         const waLink = `https://wa.me/${waNumber}?text=${encodeURIComponent(`Olá, ${a.client_name}! Confirmamos seu agendamento de ${a.service_name} com Geovanna Macedo para ${a.appointment_date} às ${a.appointment_time}. ✨`)}`;
 
+        const paymentText = a.payment_status === 'pago_total' ? '✓ Total Pago' : a.payment_status === 'sinal_pago' ? '✦ Sinal Pago' : 'Pendente';
+        const paymentColor = a.payment_status === 'pago_total' ? 'var(--green)' : a.payment_status === 'sinal_pago' ? 'var(--champagne-dark)' : 'var(--text-muted)';
+
         return `
-          <tr>
-            <td>
-              <strong>${a.appointment_date}</strong><br>
-              <span style="font-size: 11px; color: var(--champagne-dark); font-weight: 600;">🕒 ${a.appointment_time}</span>
-            </td>
-            <td><strong>${a.client_name}</strong></td>
-            <td>${a.client_phone}</td>
-            <td>${a.service_name}</td>
-            <td><strong>${formatCurrency(a.price)}</strong></td>
-            <td><span class="status-badge status-${a.status}">${a.status}</span></td>
-            <td>
-              <span style="font-size: 11px; font-weight: 600; color: ${a.payment_status === 'pago_total' ? 'var(--green)' : a.payment_status === 'sinal_pago' ? 'var(--champagne-dark)' : 'var(--text-muted)'};">
-                ${a.payment_status === 'pago_total' ? '✓ Total Pago' : a.payment_status === 'sinal_pago' ? '✦ Sinal Pago' : 'Pendente'}
-              </span>
-            </td>
-            <td style="text-align: right;">
-              <div class="action-btn-group" style="justify-content: flex-end;">
-                <a href="${waLink}" target="_blank" class="action-icon-btn whatsapp" title="Enviar WhatsApp">💬</a>
-                <button class="action-icon-btn" onclick="quickUpdateStatus(${a.id}, 'confirmado')" title="Confirmar">✓</button>
-                <button class="action-icon-btn" onclick="quickUpdateStatus(${a.id}, 'concluido')" title="Concluir">🏁</button>
+          <div class="appointment-card">
+            <div class="app-card-header">
+              <div>
+                <div class="app-card-client">${a.client_name}</div>
+                <a href="${waLink}" target="_blank" class="app-card-phone" title="Abrir WhatsApp">
+                  <span>💬</span> ${a.client_phone}
+                </a>
+              </div>
+              <span class="status-badge status-${a.status}">${a.status}</span>
+            </div>
+
+            <div class="app-card-body">
+              <div class="app-card-datetime">
+                <span>📅 ${a.appointment_date}</span>
+                <span style="color: var(--champagne-dark);">🕒 ${a.appointment_time}</span>
+              </div>
+              <div class="app-card-service">
+                <span style="font-weight: 600;">${a.service_name}</span>
+                <span class="app-card-price">${formatCurrency(a.price)}</span>
+              </div>
+              <div style="font-size: 11px; font-weight: 600; color: ${paymentColor};">
+                Pagamento: ${paymentText}
+              </div>
+            </div>
+
+            <div class="app-card-footer">
+              <div style="display: flex; gap: 6px;">
+                <button class="btn-nav-outline" style="padding: 4px 10px; font-size: 11px;" onclick="quickUpdateStatus(${a.id}, 'confirmado')" title="Confirmar">✓ Confirmar</button>
+                <button class="btn-nav-outline" style="padding: 4px 10px; font-size: 11px;" onclick="quickUpdateStatus(${a.id}, 'concluido')" title="Concluir">🏁 Concluir</button>
+              </div>
+              <div style="display: flex; gap: 6px;">
                 <button class="action-icon-btn" onclick="openEditAppointmentModal(${a.id})" title="Editar">✏️</button>
                 <button class="action-icon-btn delete" onclick="deleteAppointment(${a.id})" title="Excluir">🗑️</button>
               </div>
-            </td>
-          </tr>
+            </div>
+          </div>
         `;
       }).join('');
     }
@@ -2866,35 +3133,51 @@
     async function handleSaveAppointment(e) {
       e.preventDefault();
       const id = document.getElementById('appId').value;
+      const client_name = document.getElementById('formClientName').value.trim();
+      const client_phone = document.getElementById('formClientPhone').value.trim();
+      const service_name = document.getElementById('formServiceName').value;
+      const appointment_date = document.getElementById('formAppDate').value;
+      const appointment_time = document.getElementById('formAppTime').value;
+      const price = parseFloat(document.getElementById('formAppPrice').value) || 0;
+      const status = document.getElementById('formAppStatus').value;
+      const payment_status = document.getElementById('formPaymentStatus').value;
+
+      if (!client_name || !client_phone || !service_name || !appointment_date || !appointment_time) {
+        alert('Por favor, preencha todos os campos obrigatórios (Nome da cliente, WhatsApp, Serviço, Data e Horário).');
+        return;
+      }
+
       const payload = {
-        client_name: document.getElementById('formClientName').value,
-        client_phone: document.getElementById('formClientPhone').value,
-        service_name: document.getElementById('formServiceName').value,
-        appointment_date: document.getElementById('formAppDate').value,
-        appointment_time: document.getElementById('formAppTime').value,
-        price: parseFloat(document.getElementById('formAppPrice').value) || 0,
-        status: document.getElementById('formAppStatus').value,
-        payment_status: document.getElementById('formPaymentStatus').value
+        client_name,
+        client_phone,
+        service_name,
+        appointment_date,
+        appointment_time,
+        price,
+        status,
+        payment_status
       };
 
       try {
-        if (id) {
-          await fetch(`/api/appointments/${id}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-          });
-        } else {
-          await fetch('/api/appointments', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-          });
+        const url = id ? `/api/appointments/${id}` : '/api/appointments';
+        const method = id ? 'PUT' : 'POST';
+        const res = await fetch(url, {
+          method,
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const json = await res.json();
+        if (!res.ok || !json.success) {
+          alert('Erro ao salvar agendamento: ' + (json.error || 'Verifique se os dados estão corretos.'));
+          return;
         }
         closeModal('modalAppointment');
         await loadAppointments();
         await loadMetrics();
-      } catch (err) { alert('Erro ao salvar agendamento.'); }
+      } catch (err) {
+        console.error('Erro ao salvar agendamento:', err);
+        alert('Erro de conexão ao salvar agendamento.');
+      }
     }
 
     async function quickUpdateStatus(id, newStatus) {
@@ -2971,26 +3254,46 @@
 
     async function handleSaveTransaction(e) {
       e.preventDefault();
+      const type = document.getElementById('txType').value;
+      const category = document.getElementById('txCategory').value.trim();
+      const description = document.getElementById('txDescription').value.trim();
+      const amount = parseFloat(document.getElementById('txAmount').value) || 0;
+      const date = document.getElementById('txDate').value;
+      const payment_method = document.getElementById('txMethod').value;
+
+      if (!description || amount <= 0 || !date) {
+        alert('Por favor, preencha a descrição, a data e um valor maior que zero.');
+        return;
+      }
+
       const payload = {
-        type: document.getElementById('txType').value,
-        category: document.getElementById('txCategory').value,
-        description: document.getElementById('txDescription').value,
-        amount: parseFloat(document.getElementById('txAmount').value) || 0,
-        date: document.getElementById('txDate').value,
-        payment_method: document.getElementById('txMethod').value,
+        type,
+        category: category || (type === 'receita' ? 'Atendimento' : 'Geral'),
+        description,
+        amount,
+        date,
+        payment_method,
         status: 'pago'
       };
 
       try {
-        await fetch('/api/finances', {
+        const res = await fetch('/api/finances', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
         });
+        const json = await res.json();
+        if (!res.ok || !json.success) {
+          alert('Erro ao salvar lançamento: ' + (json.error || 'Erro na requisição.'));
+          return;
+        }
         closeModal('modalTransaction');
         await loadFinances();
         await loadMetrics();
-      } catch (err) { alert('Erro ao salvar lançamento financeiro.'); }
+      } catch (err) {
+        console.error('Erro ao salvar transação:', err);
+        alert('Erro de conexão ao salvar lançamento.');
+      }
     }
 
     async function deleteTransaction(id) {
@@ -3097,32 +3400,39 @@
     async function handleSaveInventory(e) {
       e.preventDefault();
       const id = document.getElementById('invId').value;
-      const payload = {
-        name: document.getElementById('invName').value,
-        category: document.getElementById('invCategory').value,
-        quantity: parseInt(document.getElementById('invQuantity').value, 10) || 0,
-        min_quantity: parseInt(document.getElementById('invMinQuantity').value, 10) || 2,
-        cost_price: parseFloat(document.getElementById('invCostPrice').value) || 0,
-        supplier: document.getElementById('invSupplier').value
-      };
+      const name = document.getElementById('invName').value.trim();
+      const category = document.getElementById('invCategory').value;
+      const quantity = parseInt(document.getElementById('invQuantity').value, 10) || 0;
+      const min_quantity = parseInt(document.getElementById('invMinQuantity').value, 10) || 2;
+      const cost_price = parseFloat(document.getElementById('invCostPrice').value) || 0;
+      const supplier = document.getElementById('invSupplier').value.trim();
+
+      if (!name) {
+        alert('Informe o nome do produto.');
+        return;
+      }
+
+      const payload = { name, category, quantity, min_quantity, cost_price, supplier };
 
       try {
-        if (id) {
-          await fetch(`/api/inventory/${id}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-          });
-        } else {
-          await fetch('/api/inventory', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-          });
+        const url = id ? `/api/inventory/${id}` : '/api/inventory';
+        const method = id ? 'PUT' : 'POST';
+        const res = await fetch(url, {
+          method,
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const json = await res.json();
+        if (!res.ok || !json.success) {
+          alert('Erro ao salvar produto: ' + (json.error || 'Erro na requisição.'));
+          return;
         }
         closeModal('modalInventory');
         await loadInventory();
-      } catch (err) { alert('Erro ao salvar produto de estoque.'); }
+      } catch (err) {
+        console.error('Erro ao salvar estoque:', err);
+        alert('Erro ao salvar produto de estoque.');
+      }
     }
 
     async function adjustStock(id, delta) {
@@ -3145,8 +3455,10 @@
     }
 
     // ==============================================
-    // GESTÃO DE HORÁRIOS & FOLGAS / DIAS
+    // GESTÃO DE HORÁRIOS POR DIA DA SEMANA & FOLGAS
     // ==============================================
+    const DAY_NAMES = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
+
     async function loadAvailability() {
       try {
         const res = await fetch('/api/availability');
@@ -3154,55 +3466,82 @@
         if (!json.success) return;
 
         availabilityData = json.data;
+        if (!availabilityData.daily_times) {
+          availabilityData.daily_times = { 0: [], 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] };
+        }
 
-        // Atualiza dias da semana ativos
-        const activeList = availabilityData.active_days || [1, 2, 3, 4, 5, 6];
-        document.querySelectorAll('.day-pill-toggle').forEach(btn => {
-          const dayNum = parseInt(btn.getAttribute('data-day'), 10);
-          if (activeList.includes(dayNum)) {
-            btn.classList.add('active');
-          } else {
-            btn.classList.remove('active');
-          }
-        });
-
-        // Renderiza chips de horários
-        renderTimesManager(availabilityData.custom_times || []);
-
-        // Renderiza dias bloqueados
+        renderDailyScheduleGrid(availabilityData);
         renderBlockedDatesTable(availabilityData.blocked_dates || []);
       } catch (e) { console.error('Erro ao carregar disponibilidade:', e); }
     }
 
-    function renderTimesManager(times) {
-      const container = document.getElementById('timesManagerGrid');
-      if (!times || times.length === 0) {
-        container.innerHTML = '<span style="font-size: 12px; color: var(--text-muted);">Nenhum horário cadastrado. Adicione acima.</span>';
-        return;
-      }
+    function renderDailyScheduleGrid(data) {
+      const container = document.getElementById('dailyScheduleGrid');
+      if (!container) return;
 
-      // Ordena horários
-      const sorted = [...times].sort();
+      const activeDays = data.active_days || [1, 2, 3, 4, 5, 6];
+      const dailyTimes = data.daily_times || {};
 
-      container.innerHTML = sorted.map(t => `
-        <div class="time-badge-chip">
-          <span>🕒 ${t}</span>
-          <button onclick="removeTimeSlot('${t}')" title="Remover horário">✕</button>
-        </div>
-      `).join('');
+      container.innerHTML = DAY_NAMES.map((dayName, dayNum) => {
+        const isActive = activeDays.includes(dayNum);
+        const times = dailyTimes[dayNum] || [];
+        const isSatSun = (dayNum === 0 || dayNum === 6);
+        const sortedTimes = [...times].sort();
+
+        return `
+          <div class="day-schedule-card ${isActive ? '' : 'inactive'}">
+            <div class="day-schedule-header">
+              <div class="day-schedule-title">
+                <span>${isSatSun ? '⭐' : '📅'}</span> ${dayName}
+              </div>
+              <button class="day-toggle-btn ${isActive ? 'active' : ''}" onclick="toggleActiveDay(${dayNum})">
+                ${isActive ? '✓ Ativo' : '✕ Fechado'}
+              </button>
+            </div>
+
+            ${isSatSun ? `
+              <div style="font-size: 11px; color: var(--champagne-dark); font-weight: 600; background: rgba(214, 189, 159, 0.15); padding: 6px 10px; border-radius: 10px;">
+                📲 Agendamentos vão para o WhatsApp no final de semana.
+              </div>
+            ` : ''}
+
+            <div style="font-size: 12px; font-weight: 600; color: var(--text-secondary);">
+              Horários disponíveis:
+            </div>
+
+            <div class="times-manager-grid">
+              ${sortedTimes.length > 0 ? sortedTimes.map(t => `
+                <div class="time-badge-chip">
+                  <span>🕒 ${t}</span>
+                  <button onclick="removeTimeSlotForDay(${dayNum}, '${t}')" title="Remover horário">✕</button>
+                </div>
+              `).join('') : '<span style="font-size: 11px; color: var(--text-muted);">Nenhum horário cadastrado.</span>'}
+            </div>
+
+            <div class="day-add-time-box" style="margin-top: 6px;">
+              <input type="time" id="newTimeInput_${dayNum}" class="form-control" style="padding: 4px 8px; font-size: 12px; width: 110px;" value="09:00" />
+              <button class="btn-mini-apply" style="padding: 6px 12px; font-size: 11px;" onclick="addTimeSlotForDay(${dayNum})">+ Adicionar</button>
+            </div>
+          </div>
+        `;
+      }).join('');
     }
 
-    async function addCustomTimeSlot() {
-      const timeVal = document.getElementById('newTimeInput').value;
+    async function addTimeSlotForDay(dayNum) {
+      const timeInput = document.getElementById(`newTimeInput_${dayNum}`);
+      if (!timeInput) return;
+      const timeVal = timeInput.value;
       if (!timeVal) return;
 
-      if (!availabilityData.custom_times) availabilityData.custom_times = [];
-      if (availabilityData.custom_times.includes(timeVal)) {
-        alert('Este horário já está cadastrado.');
+      if (!availabilityData.daily_times) availabilityData.daily_times = {};
+      if (!availabilityData.daily_times[dayNum]) availabilityData.daily_times[dayNum] = [];
+
+      if (availabilityData.daily_times[dayNum].includes(timeVal)) {
+        alert('Este horário já está cadastrado para este dia.');
         return;
       }
 
-      availabilityData.custom_times.push(timeVal);
+      availabilityData.daily_times[dayNum].push(timeVal);
 
       try {
         await fetch('/api/availability', {
@@ -3210,32 +3549,32 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(availabilityData)
         });
-        renderTimesManager(availabilityData.custom_times);
+        renderDailyScheduleGrid(availabilityData);
       } catch (e) { alert('Erro ao adicionar horário.'); }
     }
 
-    async function removeTimeSlot(timeVal) {
-      availabilityData.custom_times = (availabilityData.custom_times || []).filter(t => t !== timeVal);
+    async function removeTimeSlotForDay(dayNum, timeVal) {
+      if (!availabilityData.daily_times || !availabilityData.daily_times[dayNum]) return;
+      availabilityData.daily_times[dayNum] = availabilityData.daily_times[dayNum].filter(t => t !== timeVal);
+
       try {
         await fetch('/api/availability', {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(availabilityData)
         });
-        renderTimesManager(availabilityData.custom_times);
+        renderDailyScheduleGrid(availabilityData);
       } catch (e) { alert('Erro ao remover horário.'); }
     }
 
-    async function toggleActiveDay(dayNum, btnEl) {
+    async function toggleActiveDay(dayNum) {
       if (!availabilityData.active_days) availabilityData.active_days = [];
 
       const idx = availabilityData.active_days.indexOf(dayNum);
       if (idx >= 0) {
         availabilityData.active_days.splice(idx, 1);
-        if (btnEl) btnEl.classList.remove('active');
       } else {
         availabilityData.active_days.push(dayNum);
-        if (btnEl) btnEl.classList.add('active');
       }
 
       try {
@@ -3244,11 +3583,8 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(availabilityData)
         });
-        await loadAvailability();
-      } catch (e) {
-        console.error('Erro ao atualizar dias de atendimento:', e);
-        alert('Erro ao atualizar dias de atendimento.');
-      }
+        renderDailyScheduleGrid(availabilityData);
+      } catch (e) { alert('Erro ao atualizar dia.'); }
     }
 
     function renderBlockedDatesTable(blockedList) {
@@ -3297,25 +3633,167 @@
     }
 
     // ==============================================
-    // CATÁLOGO DE SERVIÇOS
+    // CATÁLOGO DE SERVIÇOS (CRUD & TOGGLE PREÇOS)
     // ==============================================
+    let servicesData = [];
+    let showPricesConfig = true;
+
     async function loadServices() {
       try {
         const res = await fetch('/api/services');
         const json = await res.json();
         if (json.success) {
-          const tbody = document.getElementById('servicesTableBody');
-          tbody.innerHTML = json.data.map(s => `
-            <tr>
-              <td><strong>${s.name}</strong></td>
-              <td>${s.duration}</td>
-              <td style="color: var(--champagne-dark); font-weight: 700;">${formatCurrency(s.price)}</td>
-              <td style="font-size: 12px; color: var(--text-secondary);">${s.description || '-'}</td>
-              <td><span class="status-badge status-confirmado">Ativo</span></td>
-            </tr>
-          `).join('');
+          servicesData = json.data || [];
+          showPricesConfig = json.show_prices !== undefined ? json.show_prices : true;
+          updateShowPricesToggleButton();
+          renderServicesGrid(servicesData);
+          updateServiceSelectDropdown(servicesData);
         }
       } catch (e) { console.error('Erro ao carregar serviços:', e); }
+    }
+
+    function updateShowPricesToggleButton() {
+      const btn = document.getElementById('btnToggleShowPrices');
+      const icon = document.getElementById('togglePricesIcon');
+      const text = document.getElementById('togglePricesText');
+      if (!btn) return;
+
+      if (showPricesConfig) {
+        btn.classList.add('active');
+        icon.textContent = '👁️';
+        text.textContent = 'Preços no Site: Visíveis (R$)';
+      } else {
+        btn.classList.remove('active');
+        icon.textContent = '🔒';
+        text.textContent = 'Preços no Site: Sob Consulta';
+      }
+    }
+
+    async function togglePricesVisibility() {
+      showPricesConfig = !showPricesConfig;
+      updateShowPricesToggleButton();
+      try {
+        await fetch('/api/services/settings/toggle-prices', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ show_prices: showPricesConfig })
+        });
+      } catch (e) { alert('Erro ao alterar exibição de preços.'); }
+    }
+
+    function renderServicesGrid(list) {
+      const container = document.getElementById('servicesContainer');
+      if (!container) return;
+
+      if (list.length === 0) {
+        container.innerHTML = `
+          <div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 30px;">
+            Nenhum serviço cadastrado no momento. Clique em "+ Novo Serviço" acima para adicionar.
+          </div>`;
+        return;
+      }
+
+      container.innerHTML = list.map(s => `
+        <div class="service-manage-card">
+          <div>
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px;">
+              <strong style="font-size: 16px; color: var(--text-primary);">${s.name}</strong>
+              <span class="badge-pill" style="font-size: 10px;">${s.duration}</span>
+            </div>
+            <p style="font-size: 12px; color: var(--text-secondary); line-height: 1.4; margin-bottom: 10px;">
+              ${s.description || 'Sem descrição cadastrada.'}
+            </p>
+          </div>
+
+          <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px dashed var(--border-glass); padding-top: 10px;">
+            <div>
+              <span style="font-size: 11px; color: var(--text-muted);">Preço:</span>
+              <div style="font-size: 16px; font-weight: 800; color: var(--champagne-dark);">
+                ${formatCurrency(s.price)}
+              </div>
+            </div>
+            <div class="action-btn-group">
+              <button class="action-icon-btn" onclick="openEditServiceModal('${s.id}')" title="Editar serviço">✏️</button>
+              <button class="action-icon-btn delete" onclick="deleteServiceItem('${s.id}')" title="Excluir serviço">🗑️</button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function updateServiceSelectDropdown(list) {
+      const select = document.getElementById('formServiceName');
+      if (!select) return;
+      select.innerHTML = list.map(s => `
+        <option value="${s.name}" data-price="${s.price}">${s.name} (${formatCurrency(s.price)})</option>
+      `).join('');
+    }
+
+    function openNewServiceModal() {
+      document.getElementById('modalServiceTitle').textContent = 'Novo Serviço';
+      document.getElementById('svcId').value = '';
+      document.getElementById('formSvcName').value = '';
+      document.getElementById('formSvcDuration').value = '1h';
+      document.getElementById('formSvcPrice').value = '';
+      document.getElementById('formSvcDescription').value = '';
+      document.getElementById('modalService').classList.add('open');
+    }
+
+    function openEditServiceModal(id) {
+      const svc = servicesData.find(s => String(s.id) === String(id));
+      if (!svc) return;
+
+      document.getElementById('modalServiceTitle').textContent = 'Editar Serviço';
+      document.getElementById('svcId').value = svc.id;
+      document.getElementById('formSvcName').value = svc.name;
+      document.getElementById('formSvcDuration').value = svc.duration;
+      document.getElementById('formSvcPrice').value = svc.price;
+      document.getElementById('formSvcDescription').value = svc.description || '';
+      document.getElementById('modalService').classList.add('open');
+    }
+
+    async function handleSaveService(e) {
+      e.preventDefault();
+      const id = document.getElementById('svcId').value;
+      const name = document.getElementById('formSvcName').value.trim();
+      const duration = document.getElementById('formSvcDuration').value.trim();
+      const price = parseFloat(document.getElementById('formSvcPrice').value) || 0;
+      const description = document.getElementById('formSvcDescription').value.trim();
+
+      if (!name) {
+        alert('Informe o nome do serviço.');
+        return;
+      }
+
+      const payload = { name, duration, price, description };
+
+      try {
+        const url = id ? `/api/services/${id}` : '/api/services';
+        const method = id ? 'PUT' : 'POST';
+        const res = await fetch(url, {
+          method,
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const json = await res.json();
+        if (!res.ok || !json.success) {
+          alert('Erro ao salvar serviço: ' + (json.error || 'Erro na requisição.'));
+          return;
+        }
+        closeModal('modalService');
+        await loadServices();
+      } catch (err) {
+        console.error('Erro ao salvar serviço:', err);
+        alert('Erro ao salvar serviço.');
+      }
+    }
+
+    async function deleteServiceItem(id) {
+      if (!confirm('Deseja realmente excluir este serviço do catálogo?')) return;
+      try {
+        await fetch(`/api/services/${id}`, { method: 'DELETE' });
+        await loadServices();
+      } catch (e) { alert('Erro ao excluir serviço.'); }
     }
 
     function closeModal(id) {

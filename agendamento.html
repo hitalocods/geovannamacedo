@@ -593,18 +593,24 @@
     <script>
         const WHATSAPP_PHONE = '5586981692975';
 
-        const SERVICES = [
-            { id: "social", label: "Maquiagem Social", dur: "1h", price: "R$ 160" },
-            { id: "noiva", label: "Noiva (Produção Completa)", dur: "2h30", price: "R$ 450" },
-            { id: "formanda", label: "Formanda Glam", dur: "2h", price: "R$ 220" },
-            { id: "penteado", label: "Penteado Exclusivo", dur: "1h", price: "R$ 140" },
-            { id: "combo", label: "Combo Make + Penteado", dur: "2h", price: "R$ 280" }
+        let SERVICES = [
+            { id: "social", label: "Maquiagem Social", dur: "1h", price: 160.00, priceFormatted: "R$ 160,00" },
+            { id: "noiva", label: "Noiva (Produção Completa)", dur: "2h30", price: 450.00, priceFormatted: "R$ 450,00" },
+            { id: "formanda", label: "Formanda Glam", dur: "2h", price: 220.00, priceFormatted: "R$ 220,00" },
+            { id: "penteado", label: "Penteado Exclusivo", dur: "1h", price: 140.00, priceFormatted: "R$ 140,00" },
+            { id: "combo", label: "Combo Make + Penteado", dur: "2h", price: 280.00, priceFormatted: "R$ 280,00" }
         ];
 
+        let showPricesConfig = true;
         let DATES = [];
         let TIMES = ["08:30", "10:00", "11:30", "14:00", "15:30", "17:00", "18:30"];
         let activeDaysOfWeek = [1, 2, 3, 4, 5, 6];
         let blockedDatesList = [];
+        let dailyTimesData = {};
+
+        function formatMoney(val) {
+            return `R$ ${parseFloat(val || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
+        }
 
         function generateDynamicDates() {
             const dates = [];
@@ -614,7 +620,7 @@
             let added = 0;
             let dayOffset = 0;
 
-            while (added < 6 && dayOffset < 30) {
+            while (added < 7 && dayOffset < 30) {
                 const d = new Date();
                 d.setDate(now.getDate() + dayOffset);
                 const dayNum = d.getDay();
@@ -631,6 +637,7 @@
                         day: String(d.getDate()).padStart(2, '0'),
                         month: months[d.getMonth()],
                         rawDate: d,
+                        dayNum: dayNum,
                         isoDate: isoDateStr
                     });
                     added++;
@@ -642,6 +649,22 @@
 
         async function initAvailability() {
             try {
+                const svcRes = await fetch('/api/services');
+                const svcJson = await svcRes.json();
+                if (svcJson.success && Array.isArray(svcJson.data) && svcJson.data.length > 0) {
+                    SERVICES = svcJson.data.map(s => ({
+                        id: s.id,
+                        label: s.name,
+                        dur: s.duration || '1h',
+                        price: parseFloat(s.price) || 0,
+                        priceFormatted: formatMoney(s.price),
+                        description: s.description || ''
+                    }));
+                }
+                if (svcJson.show_prices !== undefined) {
+                    showPricesConfig = svcJson.show_prices;
+                }
+
                 const res = await fetch('/api/availability');
                 const json = await res.json();
                 if (json.success && json.data) {
@@ -651,12 +674,15 @@
                     if (json.data.blocked_dates && Array.isArray(json.data.blocked_dates)) {
                         blockedDatesList = json.data.blocked_dates;
                     }
+                    if (json.data.daily_times) {
+                        dailyTimesData = json.data.daily_times;
+                    }
                     if (json.data.custom_times && Array.isArray(json.data.custom_times) && json.data.custom_times.length > 0) {
                         TIMES = json.data.custom_times.sort();
                     }
                 }
             } catch (e) {
-                console.warn('Usando horários padrão de contingência:', e);
+                console.warn('Usando serviços e horários padrão de contingência:', e);
             }
             DATES = generateDynamicDates();
             render();
@@ -714,7 +740,11 @@
         function checkCanProceed() {
             if (state.step === 0) return Boolean(state.service);
             if (state.step === 1) return Boolean(state.date);
-            if (state.step === 2) return Boolean(state.time);
+            if (state.step === 2) {
+                const dt = getSelectedDate();
+                if (dt && (dt.dayNum === 0 || dt.dayNum === 6)) return true;
+                return Boolean(state.time);
+            }
             if (state.step === 3) return state.name.trim().length >= 3 && state.phone.replace(/\D/g, '').length >= 10;
             return false;
         }
@@ -726,6 +756,7 @@
 
         function selectDate(id) {
             state.date = id;
+            state.time = null;
             render();
         }
 
@@ -757,14 +788,17 @@
         async function goNext() {
             if (!checkCanProceed()) return;
 
+            const dt = getSelectedDate();
+            if (state.step === 2 && dt && (dt.dayNum === 0 || dt.dayNum === 6)) {
+                redirectToSatSunWhatsApp();
+                return;
+            }
+
             if (state.step < 3) {
                 state.step++;
                 render();
             } else {
                 const svc = getSelectedService();
-                const dt = getSelectedDate();
-                
-                // Formata data YYYY-MM-DD
                 let formattedDate = new Date().toISOString().split('T')[0];
                 if (dt && dt.rawDate) {
                     const year = dt.rawDate.getFullYear();
@@ -773,7 +807,7 @@
                     formattedDate = `${year}-${month}-${day}`;
                 }
 
-                const priceNum = svc ? parseFloat(svc.price.replace(/[^\d.,]/g, '').replace(',', '.')) || 0 : 0;
+                const priceNum = svc ? svc.price || 0 : 0;
 
                 const btnNext = document.getElementById('btnNext');
                 if (btnNext) {
@@ -792,7 +826,7 @@
                             service_name: svc ? svc.label : 'Atendimento',
                             price: priceNum,
                             appointment_date: formattedDate,
-                            appointment_time: state.time,
+                            appointment_time: state.time || 'Sob Consulta',
                             status: 'pendente',
                             payment_status: 'pendente'
                         })
@@ -822,12 +856,22 @@
             return DATES.find(d => d.id === state.date);
         }
 
+        function redirectToSatSunWhatsApp() {
+            const svc = getSelectedService();
+            const dt = getSelectedDate();
+            const msg = `Olá, Geovanna! Gostaria de verificar a disponibilidade de horário para o *${dt ? `${dt.dow}, ${dt.day}/${dt.month}` : 'final de semana'}* para o serviço: *${svc ? svc.label : 'Atendimento'}*. ✨`;
+            const cleanPhone = WHATSAPP_PHONE.replace(/\D/g, '');
+            window.location.href = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(msg)}`;
+        }
+
         function buildWhatsAppUrl() {
             const svc = getSelectedService();
             const dt = getSelectedDate();
+            const priceText = showPricesConfig ? (svc ? svc.priceFormatted : '') : 'Sob Consulta';
 
             const msg = `Olá, Geovanna! Gostaria de confirmar meu agendamento:\n\n` +
                 `✦ *Serviço:* ${svc ? svc.label : ''}\n` +
+                `✦ *Valor:* ${priceText}\n` +
                 `✦ *Data:* ${dt ? `${dt.dow}, ${dt.day}/${dt.month}` : ''}\n` +
                 `✦ *Horário:* ${state.time}\n` +
                 `✦ *Nome:* ${state.name}\n` +
@@ -861,18 +905,13 @@
               ${dt ? `${dt.dow}, ${dt.day} de ${dt.month}` : ''} às <strong>${state.time}</strong><br>
               Cliente: <strong>${state.name}</strong>
             </div>
-
             <p style="font-size: 13px; color: var(--cream-soft); margin-bottom: 20px; line-height: 1.6;">
               Caso sua conversa no WhatsApp não tenha aberto automaticamente, toque abaixo:
             </p>
-
             <a href="${waUrl}" class="btn-whatsapp-pill">
-              <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/>
-              </svg>
+              <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
               Confirmar no WhatsApp
             </a>
-
             <div style="margin-top: 22px;">
               <a href="index.html" class="pill-back-link" style="justify-content: center;">
                 ← Voltar para o Início
@@ -883,11 +922,12 @@
                 return;
             }
 
-            // Step 0: Serviços
             if (state.step === 0) {
                 container.innerHTML = `
           <div class="fade-in">
-            ${SERVICES.map(s => `
+            ${SERVICES.map(s => {
+                const displayPrice = showPricesConfig ? s.priceFormatted : 'Sob Consulta';
+                return `
               <div 
                 class="service-card ${state.service === s.id ? 'selected' : ''}" 
                 onclick="selectService('${s.id}')"
@@ -896,19 +936,17 @@
               >
                 <div>
                   <div class="svc-title">${s.label}</div>
-                  <div class="svc-desc">${s.dur} • ${s.price}</div>
+                  <div class="svc-desc">${s.dur} • ${displayPrice}</div>
                 </div>
                 <div class="radio-circle">
                   ${state.service === s.id ? '✓' : ''}
                 </div>
               </div>
-            `).join('')}
+            `;
+            }).join('')}
           </div>
         `;
-            }
-
-            // Step 1: Datas
-            else if (state.step === 1) {
+            } else if (state.step === 1) {
                 container.innerHTML = `
           <div class="dates-grid fade-in">
             ${DATES.map(d => `
@@ -925,62 +963,85 @@
             `).join('')}
           </div>
         `;
-            }
+            } else if (state.step === 2) {
+                const dt = getSelectedDate();
+                const isSatSun = dt && (dt.dayNum === 0 || dt.dayNum === 6);
 
-            // Step 2: Horários
-            else if (state.step === 2) {
-                container.innerHTML = `
-          <div class="times-grid fade-in">
-            ${TIMES.map(t => `
-              <div 
-                class="time-pill ${state.time === t ? 'selected' : ''}" 
-                onclick="selectTime('${t}')"
-                role="button"
-                tabindex="0"
-              >
-                ${t}
-              </div>
-            `).join('')}
-          </div>
-        `;
-            }
-
-            // Step 3: Dados & Resumo
-            else if (state.step === 3) {
+                if (isSatSun) {
+                    const svc = getSelectedService();
+                    const cleanPhone = WHATSAPP_PHONE.replace(/\D/g, '');
+                    const waSatSunUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(`Olá Geovanna! Gostaria de verificar a disponibilidade de horário para o ${dt.dow}, ${dt.day}/${dt.month} para o serviço: ${svc ? svc.label : 'Atendimento'}. ✨`)}`;
+                    container.innerHTML = `
+            <div class="fade-in" style="background: #FFFFFF; border: 1px solid var(--border-gold); border-radius: 24px; padding: 24px 20px; text-align: center; box-shadow: 0 10px 30px rgba(168,134,97,0.1);">
+              <div style="width: 48px; height: 48px; border-radius: 50%; background: linear-gradient(135deg, #28E06E, #1EB956); color: white; display: flex; align-items: center; justify-content: center; font-size: 24px; margin: 0 auto 14px; box-shadow: 0 6px 18px rgba(37,211,102,0.35);">📲</div>
+              <h3 style="font-family: 'Cormorant Garamond', serif; font-size: 26px; font-weight: 600; color: var(--text-primary); margin-bottom: 8px;">
+                Atendimento em ${dt.dow === 'Sáb' ? 'Sábado' : 'Domingo'}
+              </h3>
+              <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 20px;">
+                Nos finais de semana, os horários são gerenciados de forma personalizada. Clique no botão abaixo para consultar disponibilidade diretamente no WhatsApp da Geovanna:
+              </p>
+              <a href="${waSatSunUrl}" class="btn-whatsapp-pill" style="text-decoration: none;">Verificar Disponibilidade no WhatsApp →</a>
+            </div>
+          `;
+                } else {
+                    let availableTimes = (dt && dailyTimesData[dt.dayNum]) ? dailyTimesData[dt.dayNum] : TIMES;
+                    if (!Array.isArray(availableTimes) || availableTimes.length === 0) availableTimes = TIMES;
+                    const sortedAvailableTimes = [...availableTimes].sort();
+                    container.innerHTML = `
+            <div class="times-grid fade-in">
+              ${sortedAvailableTimes.map(t => `
+                <div class="time-pill ${state.time === t ? 'selected' : ''}" onclick="selectTime('${t}')" role="button" tabindex="0">${t}</div>
+              `).join('')}
+            </div>
+          `;
+                }
+            } else if (state.step === 3) {
                 const svc = getSelectedService();
                 const dt = getSelectedDate();
-
+                const displayPrice = showPricesConfig ? (svc ? svc.priceFormatted : '') : 'Sob Consulta';
                 container.innerHTML = `
           <div class="fade-in">
-            <div class="input-box">
-              <label class="input-label" for="clientName">Seu Nome Completo</label>
+            <div class="summary-box">
+              <div class="summary-row">
+                <span>Serviço:</span>
+                <span>${svc ? svc.label : ''}</span>
+              </div>
+              <div class="summary-row">
+                <span>Valor:</span>
+                <span style="font-weight: 700; color: var(--champagne-dark);">${displayPrice}</span>
+              </div>
+              <div class="summary-row">
+                <span>Data & Horário:</span>
+                <span>${dt ? `${dt.dow}, ${dt.day}/${dt.month}` : ''} às ${state.time || ''}</span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="clientName">Seu Nome Completo</label>
               <input 
                 type="text" 
                 id="clientName" 
-                class="rounded-input" 
+                class="form-control" 
                 placeholder="Ex: Maria Silva" 
                 value="${state.name}"
                 oninput="handleNameInput(event)"
-                autofocus
+                required
+                autocomplete="name"
               />
             </div>
 
-            <div class="input-box">
-              <label class="input-label" for="clientPhone">WhatsApp com DDD</label>
+            <div class="form-group">
+              <label class="form-label" for="clientPhone">Seu WhatsApp com DDD</label>
               <input 
                 type="tel" 
                 id="clientPhone" 
-                class="rounded-input" 
+                class="form-control" 
                 placeholder="(86) 99999-9999" 
                 value="${state.phone}"
                 oninput="handlePhoneInput(event)"
+                required
+                autocomplete="tel"
               />
-            </div>
-
-            <div class="summary-box">
-              <div>✦ Serviço: <strong>${svc ? svc.label : ''} (${svc ? svc.dur : ''})</strong></div>
-              <div>✦ Data: <strong>${dt ? `${dt.dow}, ${dt.day} de ${dt.month}` : ''}</strong></div>
-              <div>✦ Horário: <strong>${state.time || ''}</strong></div>
             </div>
           </div>
         `;

@@ -39,9 +39,20 @@ const DEFAULT_INVENTORY = [
   { id: 6, name: 'Iluminador Líquido Rare Beauty', category: 'Maquiagem', quantity: 3, min_quantity: 2, cost_price: 190.00, supplier: 'Sephora', last_restock: '2026-08-29' }
 ];
 
+const DEFAULT_DAILY_TIMES = {
+  0: ['09:00', '11:00', '14:00', '16:00'],
+  1: ['07:30', '08:30', '10:00', '11:30', '14:00', '15:30', '17:00', '18:30'],
+  2: ['07:30', '08:30', '10:00', '11:30', '14:00', '15:30', '17:00', '18:30'],
+  3: ['07:30', '08:30', '10:00', '11:30', '14:00', '15:30', '17:00', '18:30'],
+  4: ['07:30', '08:30', '10:00', '11:30', '14:00', '15:30', '17:00', '18:30'],
+  5: ['07:30', '08:30', '10:00', '11:30', '14:00', '15:30', '17:00', '18:30'],
+  6: ['07:30', '08:30', '10:00', '11:30', '14:00', '15:30', '17:00', '18:30']
+};
+
 const DEFAULT_AVAILABILITY = {
   active_days: [1, 2, 3, 4, 5, 6], // Seg a Sáb por padrão
   custom_times: ['07:30', '08:30', '10:00', '11:30', '14:00', '15:30', '17:00', '18:30'],
+  daily_times: DEFAULT_DAILY_TIMES,
   blocked_dates: [
     { id: '1', date: '2026-09-15', reason: 'Curso de Especialização' },
     { id: '2', date: '2026-09-25', reason: 'Viagem / Congresso' }
@@ -629,14 +640,28 @@ async function deleteInventoryItem(id) {
 // ----------------------------------------------------
 async function getAvailabilitySettings() {
   await initDb();
+  let result;
   if (isNeonConnected) {
     const res = await pool.query("SELECT value FROM settings WHERE key = 'availability'");
-    if (res.rows.length > 0) return res.rows[0].value;
-    return DEFAULT_AVAILABILITY;
+    if (res.rows.length > 0) result = res.rows[0].value;
+    else result = DEFAULT_AVAILABILITY;
   } else {
     const data = getLocalData();
-    return data.availability || DEFAULT_AVAILABILITY;
+    result = data.availability || DEFAULT_AVAILABILITY;
   }
+
+  // Garantir que daily_times existe no objeto
+  if (!result.daily_times) {
+    result.daily_times = { ...DEFAULT_DAILY_TIMES };
+  } else {
+    // Preencher dias faltantes se houver
+    for (let day = 0; day <= 6; day++) {
+      if (!result.daily_times[day]) {
+        result.daily_times[day] = DEFAULT_DAILY_TIMES[day] || ['09:00', '14:00'];
+      }
+    }
+  }
+  return result;
 }
 
 async function updateAvailabilitySettings(settings) {
@@ -677,8 +702,104 @@ async function deleteBlockedDate(idOrDate) {
   return false;
 }
 
+// ----------------------------------------------------
+// MÉTODOS DE SERVIÇOS & CONFIGURAÇÃO DE EXIBIÇÃO DE PREÇOS
+// ----------------------------------------------------
+async function getServicesSettings() {
+  await initDb();
+  let settings;
+  if (isNeonConnected) {
+    const res = await pool.query("SELECT value FROM settings WHERE key = 'services_config'");
+    if (res.rows.length > 0) {
+      settings = res.rows[0].value;
+    }
+  } else {
+    const data = getLocalData();
+    if (data.services_config) settings = data.services_config;
+  }
+
+  if (!settings) {
+    const data = getLocalData();
+    settings = {
+      services: data.services || DEFAULT_SERVICES,
+      show_prices: true
+    };
+  }
+
+  if (!Array.isArray(settings.services) || settings.services.length === 0) {
+    settings.services = DEFAULT_SERVICES;
+  }
+  if (settings.show_prices === undefined) {
+    settings.show_prices = true;
+  }
+
+  return settings;
+}
+
+async function saveServicesSettings(settings) {
+  await initDb();
+  if (isNeonConnected) {
+    await pool.query(
+      `INSERT INTO settings (key, value) VALUES ('services_config', $1)
+       ON CONFLICT (key) DO UPDATE SET value = $1`,
+      [JSON.stringify(settings)]
+    );
+  }
+  const data = getLocalData();
+  data.services_config = settings;
+  data.services = settings.services;
+  saveLocalData(data);
+  return settings;
+}
+
 async function getServices() {
-  return DEFAULT_SERVICES;
+  const config = await getServicesSettings();
+  return config.services;
+}
+
+async function createService(serviceData) {
+  const config = await getServicesSettings();
+  const id = serviceData.id || `svc_${Date.now()}`;
+  const newService = {
+    id,
+    name: serviceData.name || 'Novo Serviço',
+    duration: serviceData.duration || '1h',
+    price: parseFloat(serviceData.price) || 0,
+    description: serviceData.description || '',
+    category: serviceData.category || 'Geral'
+  };
+  config.services.push(newService);
+  await saveServicesSettings(config);
+  return newService;
+}
+
+async function updateService(id, updates) {
+  const config = await getServicesSettings();
+  const idx = config.services.findIndex(s => String(s.id) === String(id));
+  if (idx === -1) return null;
+  config.services[idx] = {
+    ...config.services[idx],
+    ...updates,
+    price: updates.price !== undefined ? parseFloat(updates.price) : config.services[idx].price
+  };
+  await saveServicesSettings(config);
+  return config.services[idx];
+}
+
+async function deleteService(id) {
+  const config = await getServicesSettings();
+  const idx = config.services.findIndex(s => String(s.id) === String(id));
+  if (idx === -1) return null;
+  const removed = config.services.splice(idx, 1)[0];
+  await saveServicesSettings(config);
+  return removed;
+}
+
+async function toggleShowPrices(show) {
+  const config = await getServicesSettings();
+  config.show_prices = Boolean(show);
+  await saveServicesSettings(config);
+  return config.show_prices;
 }
 
 module.exports = {
@@ -703,5 +824,10 @@ module.exports = {
   updateAvailabilitySettings,
   addBlockedDate,
   deleteBlockedDate,
-  getServices
+  getServicesSettings,
+  getServices,
+  createService,
+  updateService,
+  deleteService,
+  toggleShowPrices
 };
